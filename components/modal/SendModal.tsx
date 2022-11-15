@@ -240,7 +240,7 @@ const SendModal = ({ open, onDidDismiss }: any) => {
     return <>
       <div>
         {
-          assets.length ?
+          assets?.length ?
             <>
               {assets.map((asset, index) => {
                 return <div key={index} className='block relative mt-1 rounded-md shadow-sm '>
