@@ -93,4 +93,4 @@ In order to maintain and expand this project we accept donations in Ada to susta
 
 Address: ```addr1qyh8r8a78d2wjj3g83tt7vre0fs4wseee6fte53ds58ujmu6hdn8zrnp37cqzdy3lctzgls7zlvt8skvvxcy2n3pcqxsnhk20u```
 
-As an alternative, you can delegate and stake through [Ada Booster Stake Pool](https://pooltool.io/pool/6b5179aee4db62de5bec35029e4c9b02145366acfec872f1594924db/epochs) ticker **BOOST**.
+As an alternative, you can delegate and stake through [Boost Stake Pool](https://pooltool.io/pool/6b5179aee4db62de5bec35029e4c9b02145366acfec872f1594924db/epochs) ticker **BOOST**.
