@@ -3,7 +3,7 @@
 
 ![Waller Preview](walletPreview.png)
 
-With ❤️ by [BOOST Stake Pool](https://twitter.com/AdaBooster)
+With ❤️ by [BOOST Stake Pool](https://twitter.com/BoostPool)
 
 Try the [demo here](https://demo-wallet.boostpool.io/) 🚀
 
@@ -69,7 +69,8 @@ Or open Android Studio:
 ```
     npx cap open android
 ```
-
+#### Desktop
+Follow the instructions from the official site to setup [capacitor+electron](https://capacitor-community.github.io/electron/)
 ## Check Live logs
 Open on browser and select ```inspect```:
 ```
