@@ -3,7 +3,10 @@
 
 ![Waller Preview](walletPreview.png)
 
+With ❤️ by [BOOST Stake Pool](https://twitter.com/AdaBooster)
+
 Try the [demo here](https://demo-wallet.boostpool.io/) 🚀
+
 
 ## Stack
 #### Multiplatform: web, browser extension, mobile and desktop
