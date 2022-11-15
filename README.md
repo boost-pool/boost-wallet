@@ -87,7 +87,7 @@ To enable Livereload and Instant Refresh during development (when running `npm r
     }
 ```
 
-### Donations
+### Donations 🙏
 In order to maintain and expand this project we accept donations in Ada to sustain the development.
 
 Address: ```addr1qyh8r8a78d2wjj3g83tt7vre0fs4wseee6fte53ds58ujmu6hdn8zrnp37cqzdy3lctzgls7zlvt8skvvxcy2n3pcqxsnhk20u```
