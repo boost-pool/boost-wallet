@@ -1,7 +1,7 @@
 
 # Cardano Wallet and Dapp Boilerplate
 
-![Waller Preview](walletPreview.png)
+![Waller Preview](boost-wallet-preview.gif)
 
 With ❤️ by [BOOST Stake Pool](https://twitter.com/BoostPool)
 
