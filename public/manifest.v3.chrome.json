@@ -1,0 +1,23 @@
+{
+  "name": "BOOST Wallet",
+  "short_name": "BOOST Wallet",
+  "description": "Cardano light wallet",
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "action": {
+    "default_title": "BOOST Wallet",
+    "default_popup": "popup/index.html"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "activeTab"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self'"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
