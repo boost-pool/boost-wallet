@@ -29,7 +29,7 @@ Please note: this repo isn't quite production ready as-is. Users will want to se
 
 This project is a standard Next.js app, so the typical Next.js development process applies (`npm run dev` for browser-based development). However, there is one caveat: the app must be exported to deploy to iOS and Android, since it must run purely client-side. ([more on Next.js export](https://nextjs.org/docs/advanced-features/static-html-export))
 
-Note: you will need a free Blockfrost Token ID or [Dandelion endpoint](https://blockfrost-api.testnet.dandelion.link) (just for development purpose).
+Note: you will need a free Blockfrost Token ID or [Dandelion](https://blockfrost-api.testnet.dandelion.link) service by [PEACE Stake Pool](https://twitter.com/repsistance).
 
 Build and export for all platforms:
 ```bash
