@@ -33,9 +33,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-# app configuration
-config.ts
-
 /extension/
 
 out.zip
