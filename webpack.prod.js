@@ -10,7 +10,7 @@ module.exports = merge(require("./webpack.common.js"), {
    mode: "production",
    output: {
       path: path.resolve(__dirname, "build"),
-      filename: 'bundle.[fullhash].js',
+      filename: 'bundle.[name].[fullhash].js',
    },
    module: {
       rules: [

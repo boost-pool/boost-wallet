@@ -4,7 +4,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 
 const config = {
-   entry: path.join(__dirname, "src", "index.jsx"),
+   entry:{
+      main: path.join(__dirname, "src", "index.jsx")
+   },
    experiments: {
       asyncWebAssembly: true,
       syncWebAssembly: true
@@ -48,10 +50,15 @@ const config = {
          buffer: require.resolve('buffer/'),
       }
    },
-
    plugins: [
       new HtmlWebpackPlugin({
          template: path.join(__dirname, "src", "index.html"),
+      }),
+      new HtmlWebpackPlugin({
+         template: path.join(__dirname, "src", "popup", "index.html"),
+         filename: 'popup.html',
+         chunks: ['popup'],
+         cache: false,
       }),
       new CopyPlugin({
          patterns: [
