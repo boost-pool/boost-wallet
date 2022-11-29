@@ -6,25 +6,11 @@
   "version": "1.0.0",
   "action": {
     "default_title": "BOOST Wallet",
-    "default_popup": "popup/index.html"
+    "default_popup": "index.html"
   },
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
+  "icons": {
+    "128": "logo192.png"
+  },
   "permissions": [
     "storage",
     "tabs",
@@ -32,9 +18,9 @@
     "activeTab"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self'"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline' 'self'; default-src 'self'"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "service-worker.js"
   }
 }
