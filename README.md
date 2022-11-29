@@ -41,7 +41,7 @@ All the client side files will be sent to the `./build/` directory. These files 
 
 #### Web
 ```bash
-    npm run dev
+   yarn dev
 ```
 
 #### Chromium Extension

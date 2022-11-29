@@ -1,4 +1,4 @@
-package com.devrendy;
+package com.boostwallet;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,8 +1,12 @@
 {
-	"appId": "com.devrendy",
-	"appName": "Dev Rendy",
+	"appId": "com.boostwallet",
+	"appName": "Boost Wallet",
 	"webDir": "build",
+	"bundledWebRuntime": true,
 	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		},
 		"LocalNotifications": {
 			"smallIcon": "ic_stat_icon_config_sample",
 			"iconColor": "#488AFF",
@@ -10,8 +14,7 @@
 		}
 	},
 	"server": {
-		"url": "http://192.168.0.15:3000",
+		"url": "http://192.168.0.15:3001",
 		"cleartext": true
-	},
-	"bundledWebRuntime": false
+	}
 }
