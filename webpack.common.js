@@ -5,7 +5,8 @@ const webpack = require("webpack");
 
 const config = {
    entry:{
-      main: path.join(__dirname, "src", "index.jsx")
+      main: path.join(__dirname, "src", "index.jsx"),
+      popup: path.join(__dirname, "src", "popup", "index.jsx"),
    },
    experiments: {
       asyncWebAssembly: true,
