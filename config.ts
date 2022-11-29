@@ -1,7 +1,7 @@
 
 export const NETWORK = "preprod";
 
-export const BLOCKFROST_TOKEN = "";
+export const BLOCKFROST_TOKEN = "preprodBVOYg2bl1eg4ohPQJW9EpCgQOO0WSERQ";
 
 export const BLOCKFROST_DEFAULT_URL = "https://cardano-preprod.blockfrost.io/api/v0/";
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">boost-wallet</string>
-    <string name="title_activity_main">boost-wallet</string>
-    <string name="package_name">com.example.app</string>
-    <string name="custom_url_scheme">com.example.app</string>
+    <string name="app_name">Dev Rendy</string>
+    <string name="title_activity_main">Dev Rendy</string>
+    <string name="package_name">com.devrendy</string>
+    <string name="custom_url_scheme">com.devrendy</string>
 </resources>
