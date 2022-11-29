@@ -1,6 +1,6 @@
 {
-   "appId": "com.devrendy",
-   "appName": "Dev Rendy",
+   "appId": "com.boostwallet",
+   "appName": "Boost Wallet",
    "webDir": "build",
    "plugins": {
       "LocalNotifications": {

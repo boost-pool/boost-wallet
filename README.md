@@ -21,7 +21,7 @@ Try the [demo here](https://demo-wallet.boostpool.io/) 🚀
 - Cardano Serialization Libs + [Mesh](https://mesh.martify.io/)
 - IPFS Deployment with Fleek ```.fleek.json```
 
-This repo is a conceptual starting point for building a multiplatform wallet or dapp. Based on [Capacitor boilerplate](https://github.com/mlynch/nextjs-tailwind-ionic-capacitor-starter).
+This repo is a conceptual starting point for building a multiplatform wallet or dapp. Based on [Capacitor boilerplate](https://github.com/rendyproklamanta/react-webpack-capacitor).
 
 Please note: this repo isn't quite production ready as-is. Users will want to setup the endpoints and network, check ``config.example.ts``.
 
