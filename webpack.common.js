@@ -9,7 +9,8 @@ const config = {
       popup: path.join(__dirname, "src", "popup", "index.jsx"),
       background: path.join(__dirname, 'src', 'api', 'background', 'index.ts'),
       contentScript: path.join(__dirname, 'src', 'api', 'background', 'inject', 'index.js'),
-      injected: path.join(__dirname, 'src', 'api', 'background',  'inject', 'injected.js')
+      injected: path.join(__dirname, 'src', 'api', 'background',  'inject', 'injected.js'),
+      internalPopup: path.join(__dirname, 'src', 'popup', 'internal.jsx'),
    },
    experiments: {
       asyncWebAssembly: true,
@@ -62,6 +63,12 @@ const config = {
          template: path.join(__dirname, "src", "popup", "index.html"),
          filename: 'popup.html',
          chunks: ['popup'],
+         cache: false,
+      }),
+      new HtmlWebpackPlugin({
+         template: path.join(__dirname, "src", "popup", "internal.html"),
+         filename: 'internalPopup.html',
+         chunks: ['internalPopup'],
          cache: false,
       }),
       new CopyPlugin({

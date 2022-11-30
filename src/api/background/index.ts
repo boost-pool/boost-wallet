@@ -14,6 +14,9 @@ import {
 } from '../extension';
 import { Messaging } from './messaging';
 import { APIError, METHOD, POPUP, SENDER, TARGET } from './config';
+// @ts-ignore
+import extension from 'extensionizer';
+const extensionStorage = extension.storage && extension.storage.local;
 
 const app = Messaging.createBackgroundController();
 
@@ -45,6 +48,9 @@ app.add(METHOD.getBalance, (request, sendResponse) => {
 });
 
 app.add(METHOD.enable, async (request, sendResponse) => {
+
+    console.log("app.add(METHOD.enable");
+    console.log(request);
     // @ts-ignore
     isWhitelisted(request.origin)
         .then(async (whitelisted) => {
@@ -381,14 +387,19 @@ app.add(METHOD.signTx, async (request, sendResponse) => {
 app.listen();
 
 //delete localStorage globalModel
+
 // @ts-ignore
+/*
 chrome.runtime.onStartup.addListener(function () {
-    const entry = Object.keys(localStorage).find((l) =>
+    const entry = Object.keys(extensionStorage).find((l) =>
         l.includes('globalModel')
     );
     // @ts-ignore
-    window.localStorage.removeItem(entry);
+    extensionStorage.removeItem(entry);
 });
-const entry = Object.keys(localStorage).find((l) => l.includes('globalModel'));
+const entry = Object.keys(extensionStorage).find((l) => l.includes('globalModel'));
 // @ts-ignore
-window.localStorage.removeItem(entry);
+extensionStorage.removeItem(entry);
+
+ */
+

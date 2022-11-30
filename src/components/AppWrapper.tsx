@@ -4,7 +4,7 @@ import { App } from '@capacitor/app';
 import React, { useEffect, useRef } from 'react';
 import CardanoModule from "../lib/CardanoModule";
 import {createStore, set} from "../db/storage";
-import {DB_NAME, getAccountFromDb, getSettingsFromDb, setSettingsInDb} from "../db";
+import {DB_NAME, getAccountFromDb, getSettingsFromDb, setExternalInDb, setSettingsInDb} from "../db";
 import {setAccount, setLanguage, setSettings} from "../store/actions";
 import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
@@ -65,6 +65,7 @@ const AppWrapper = (props) => {
      */
     setSettings(settings);
     await setSettingsInDb(settings);
+    await setExternalInDb({whitelist: []});
 
   }
 

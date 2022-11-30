@@ -1,4 +1,5 @@
 import {POPUP_WINDOW, STORAGE} from "../background/config";
+import {getWhitelistInDb} from "../../db";
 
 export const getStorage = (key) => {}
 export const setStorage = (item) => {}
@@ -16,7 +17,8 @@ export const getWhitelisted = async () => {
 };
 
 export const isWhitelisted = async (_origin) => {
-
+    const whitelisted = await getWhitelistInDb();
+    return whitelisted.includes(_origin);
 };
 
 export const setWhitelisted = async (origin) => {
@@ -142,6 +144,7 @@ export const setAccountAvatar = async (avatar) => {
 };
 
 export const createPopup = async (popup) => {
+    console.log("createPopup");
   let left = 0;
   let top = 0;
   try {
@@ -163,6 +166,8 @@ export const createPopup = async (popup) => {
     left = Math.max(screenX + (outerWidth - POPUP_WINDOW.width), 0);
   }
 
+  console.log("chrome.tabs.create");
+  console.log(popup);
   const { popupWindow, tab } = await new Promise((res, rej) =>
     chrome.tabs.create(
       {

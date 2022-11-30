@@ -52,7 +52,6 @@ const MainRoutes = () => {
              // make sure to catch any error
              .catch(console.error)
       }
-      //ReactGA.send({ hitType: "pageview", page: "/terms-conditions" });
    }, [])
 
    useEffect(() => {

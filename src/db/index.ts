@@ -121,3 +121,35 @@ export const setSubmitUrlInDb = async (submitUrl:string) => {
     await set("settings", settings);
   }
 }
+
+export const setExternalInDb = async (external:any) => {
+  if (external){
+    await set("external", external);
+  }
+}
+
+export const getExternalInDb = async () => {
+  const external = get("external");
+  if (external){
+    return external
+  } else {
+    return {
+      whitelist: []
+    }
+  }
+}
+
+export const getWhitelistInDb = async () => {
+  const external = await get("external");
+  return external?.whitelist || [];
+}
+
+export const addOriginToWhitelist = async (origin:string) => {
+
+  let external = await get("external");
+
+  if (external && !external.whitelist.includes(origin)){
+    external.whitelist = [...external.whitelist, origin];
+    await set("external", external);
+  }
+}

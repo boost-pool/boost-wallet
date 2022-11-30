@@ -21,12 +21,14 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline' 'self'; img-src 'unsafe-inline' 'self' data: http://www.w3.org; script-src-elem 'unsafe-inline' 'self' https://unpkg.com; default-src 'self'; connect-src 'unsafe-inline' 'self' https://api.coingecko.com https://cardano-preprod.blockfrost.io localhost"
   },
+  "background": { "service_worker": "background.bundle.js" },
   "web_accessible_resources": [
     {
       "resources": [
         "icon-128.png",
         "icon-34.png",
-        "injected.bundle.js"
+        "injected.bundle.js",
+        "internalPopup.html"
       ],
       "matches": ["http://*/*", "https://*/*", "<all_urls>"]
     }
