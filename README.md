@@ -46,7 +46,9 @@ All the client side files will be sent to the `./build/` directory. These files 
 
 #### Chromium Extension
 ```bash
-
+1. Open chrome://extensions/ in chrome
+2. Turn on Developer Mode.
+3. Load ```build``` folder.
 ```
 
 #### Mobile

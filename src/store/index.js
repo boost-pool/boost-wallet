@@ -9,6 +9,10 @@ const Store = new PullStateStore({
   notificationsOpen: false,
   currentPage: null,
   account: {},
+  router: {
+    currentPath: '/',
+    history: []
+  },
   settings:{
     language: "English",
     currentAccount: 1,

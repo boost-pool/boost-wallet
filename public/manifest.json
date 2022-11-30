@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "action": {
     "default_title": "BOOST Wallet",
-    "default_popup": "index.html"
+    "default_popup": "popup.html"
   },
   "icons": {
     "128": "logo192.png"
@@ -18,7 +18,7 @@
     "activeTab"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline' 'self'; default-src 'self'"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline' 'self'; img-src 'unsafe-inline' 'self' data: http://www.w3.org; script-src-elem 'unsafe-inline' 'self' https://unpkg.com; default-src 'self'; connect-src 'unsafe-inline' 'self' https://api.coingecko.com https://cardano-preprod.blockfrost.io localhost"
   },
   "background": {
     "service_worker": "service-worker.js"

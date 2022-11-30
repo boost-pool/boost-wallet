@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { writeToClipboard } from '../utils/clipboard';
 import { Browser } from '@capacitor/browser';
 import Toast from '../components/Toast';
-
+// @ts-ignore
+import boostLogo from '../resources/img/adabooster-logo.jpeg';
 // @ts-ignore
 export default function P2PChat(props) {
 
@@ -36,7 +37,7 @@ export default function P2PChat(props) {
                          <div className="flex items-center">
                             <div>
                                <img className="w-10 h-10 rounded-full"
-                                    src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"/>
+                                    src={boostLogo}/>
                             </div>
                             <div className="ml-4">
                                <p className="text-grey-darkest">

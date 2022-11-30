@@ -2,7 +2,7 @@ import "./utils/splide.min.jsx";
 import "./utils/index.jsx";
 import React, {useRef} from "react";
 import { useEffect } from "react";
-import { BrowserRouter, Route, useLocation, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, useLocation, Routes } from "react-router-dom";
 import AppWrapper from "./components/AppWrapper";
 import Home from "./pages/Home";
 import Menu from "./components/Menu";
@@ -10,12 +10,27 @@ import BottomMenu from "./components/BottomMenu";
 import P2PChat from "./pages/Chat";
 import Settings from "./pages/Settings";
 import Network from "./pages/Network";
+// @ts-ignore
+import {getRouter} from "./store/selectors";
+import Store from './store';
+
+export const ROUTES = {
+    MAIN: '/',
+    NETWORK: "network",
+    P2P: "p2p",
+    SETTINGS: "settings"
+}
 
 const MainRoutes = () => {
 
    const location = useLocation();
 
-   const useIsMounted = () => {
+    const router = Store.useState(getRouter);
+
+    console.log("router");
+    console.log(router);
+
+    const useIsMounted = () => {
       const isMounted = useRef(false)
       // @ts-ignore
       useEffect(() => {
@@ -48,21 +63,32 @@ const MainRoutes = () => {
       //if (transitionName == "prev") setTransitionName("");
    }, [location]);
 
+    const renderPage =  () => {
+
+        console.log("renderPage");
+        console.log(router.currentPath);
+        switch (router.currentPath) {
+
+            case ROUTES.MAIN:
+                return <Home />
+            case ROUTES.NETWORK:
+                return <Network />
+            case ROUTES.P2P:
+                return <P2PChat />
+            case ROUTES.SETTINGS:
+                return <Settings />
+            default:
+                return <Home />
+        }
+    }
+
    return (
          <AppWrapper>
             <div className="h-1/10">
                <Menu />
             </div>
             <div className="h-8/10">
-               <Routes location={location}>
-                  {/* @ts-ignore */}
-                  <Route exact path="/" element={<Home />} />
-                  {/* @ts-ignore */}
-                  <Route path="/network" element={<Network />} />
-                  {/* @ts-ignore */}
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/p2p" element={<P2PChat />} />
-               </Routes>
+                {renderPage()}
             </div>
             <div className="h-1/10">
                <BottomMenu onClose={()=>{}} open={false}/>
@@ -74,9 +100,9 @@ const MainRoutes = () => {
 
 function App() {
    return (
-      <BrowserRouter>
+      <Router>
          <MainRoutes />
-      </BrowserRouter>
+      </Router>
    );
 }
 
