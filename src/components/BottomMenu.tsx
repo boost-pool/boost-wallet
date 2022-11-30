@@ -12,6 +12,7 @@ import Store from '../store';
 // @ts-ignore
 import {setCurrentPath} from "../store/actions";
 import {ROUTES} from "../App";
+import {handlePath} from "./routing";
 
 interface IBottomMenu {
   open: boolean,
@@ -26,10 +27,6 @@ const BottomMenu: FC<IBottomMenu> = (props) => {
     || []);
 
   let addr = account && account.externalPubAddress && account.externalPubAddress.length && account.externalPubAddress[0]?.address || 'nonAddr';
-
-  const handlePath = (path:string) => {
-    setCurrentPath(path);
-  };
 
   return (
     <>

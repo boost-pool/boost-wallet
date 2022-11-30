@@ -2,7 +2,8 @@ import "./utils/splide.min.jsx";
 import "./utils/index.jsx";
 import React, {useRef} from "react";
 import { useEffect } from "react";
-import { BrowserRouter as Router, Route, useLocation, Routes } from "react-router-dom";
+import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import {IonApp, IonContent, IonPage} from '@ionic/react';
 import AppWrapper from "./components/AppWrapper";
 import Home from "./pages/Home";
 import Menu from "./components/Menu";
@@ -64,11 +65,7 @@ const MainRoutes = () => {
    }, [location]);
 
     const renderPage =  () => {
-
-        console.log("renderPage");
-        console.log(router.currentPath);
         switch (router.currentPath) {
-
             case ROUTES.MAIN:
                 return <Home />
             case ROUTES.NETWORK:
@@ -83,17 +80,26 @@ const MainRoutes = () => {
     }
 
    return (
-         <AppWrapper>
-            <div className="h-1/10">
-               <Menu />
-            </div>
-            <div className="h-8/10">
-                {renderPage()}
-            </div>
-            <div className="h-1/10">
-               <BottomMenu onClose={()=>{}} open={false}/>
-            </div>
-         </AppWrapper>
+       <IonApp>
+           <AppWrapper>
+
+                       <div className="h-1/10">
+                           <Menu />
+                       </div>
+                       <div className="h-8/10">
+                           <IonPage>
+
+                           {renderPage()}
+
+                           </IonPage>
+                       </div>
+                       <div className="h-1/10">
+                           <BottomMenu onClose={()=>{}} open={false}/>
+                       </div>
+
+           </AppWrapper>
+       </IonApp>
+
    );
 };
 
