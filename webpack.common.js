@@ -8,7 +8,8 @@ const config = {
       main: path.join(__dirname, "src", "index.jsx"),
       popup: path.join(__dirname, "src", "popup", "index.jsx"),
       background: path.join(__dirname, 'src', 'api', 'background', 'index.ts'),
-      injected: path.join(__dirname, 'src', 'api', 'background', 'injected.js')
+      contentScript: path.join(__dirname, 'src', 'api', 'background', 'inject', 'index.js'),
+      injected: path.join(__dirname, 'src', 'api', 'background',  'inject', 'injected.js')
    },
    experiments: {
       asyncWebAssembly: true,
