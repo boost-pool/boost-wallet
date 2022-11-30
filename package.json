@@ -95,7 +95,8 @@
       "webpack-dev-server": "^4.11.1",
       "workbox-webpack-plugin": "^6.5.4",
       "i18next": "19.8.4",
-      "react-i18next": "11.8.2"
+      "react-i18next": "11.8.2",
+      "extensionizer": "1.0.1"
    },
    "browserslist": {
       "production": [

@@ -7,6 +7,8 @@ const config = {
    entry:{
       main: path.join(__dirname, "src", "index.jsx"),
       popup: path.join(__dirname, "src", "popup", "index.jsx"),
+      background: path.join(__dirname, 'src', 'api', 'background', 'index.ts'),
+      injected: path.join(__dirname, 'src', 'api', 'background', 'injected.js')
    },
    experiments: {
       asyncWebAssembly: true,

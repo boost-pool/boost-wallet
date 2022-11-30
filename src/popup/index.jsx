@@ -18,7 +18,7 @@ root.render(
    <React.StrictMode>
       <SafeArea top bottom>
          <I18nextProvider i18n={ i18n }>
-            <div style={{height: "600px", width: "400px"}}>
+            <div style={{height: "650px", width: "400px"}}>
                <App />
             </div>
          </I18nextProvider>
