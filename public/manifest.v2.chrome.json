@@ -1,37 +1,29 @@
 {
-  "name": "BOOST Wallet",
-  "short_name": "BOOST Wallet",
-  "description": "Cardano light wallet",
   "manifest_version": 2,
-  "version": "1.0.0",
+  "version": "3.2.5",
+  "description": "A wallet to experience Cardano to as developer",
+  "name": "Boost",
+  "background": { "scripts": ["background.bundle.js"], "persistent": false },
   "browser_action": {
-    "default_title": "BOOST Wallet",
-    "default_popup": "popup/index.html"
+    "default_popup": "popup.html",
+    "default_icon": "logo192.png"
   },
-  "icons": [
+  "icons": {
+    "128": "logo192.png"
+  },
+  "content_scripts": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "matches": ["http://*/*", "https://*/*", "file://*/*"],
+      "js": ["contentScript.bundle.js"],
+      "run_at": "document_start"
     }
   ],
-  "permissions": [
-    "storage",
-    "tabs"
+  "web_accessible_resources": [
+    "icon-128.png",
+    "icon-34.png",
+    "injected.bundle.js",
+    "internalPopup.html"
   ],
-  "content_security_policy": "script-src 'self' 'wasm-eval'; object-src 'self'",
-  "background": {
-    "scripts": ["next-assets/background.js"],
-    "persistent": true
-  }
+  "permissions": ["storage", "chrome://favicon/", "unlimitedStorage"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
 }
