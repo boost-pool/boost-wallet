@@ -1,7 +1,6 @@
 import {POPUP_WINDOW, STORAGE} from "../background/config";
 import {addOriginToWhitelist, getAccountFromDb, getWhitelistInDb, removeOriginFromWhitelist} from "../../db";
 import {EmurgoModule} from "../../lib/emurgo";
-import Loader from '../../lib/loader';
 
 Loader.load();
 
@@ -106,45 +105,12 @@ export const getAddress = async () => {
 };
 
 export const getRewardAddress = async () => {
-    console.log("getRewardAddress13355");
-
-    console.log("hey11111");
-    console.log("Loader");
-    console.log(Loader);
-    console.log("EmurgoModule");
-    console.log(EmurgoModule);
-
-    console.log("try1")
-    await EmurgoModule.CardanoWasm()
-    console.log("try2")
-
-    return "stake_test1uqald738wpra0dsnw9d672uu25qgtjvxmqzv90un97epwfse720ee";
-
-    await Loader.load();
-    console.log("hey2");
-    const currentAccount = await getAccountFromDb();
-    console.log("currentAccount");
-    console.log(currentAccount);
-    const rewardAddr = Buffer.from(
-        Loader.Cardano.Address.from_bech32(currentAccount.rewardAddr).to_bytes(),
-        'hex'
-    ).toString('hex');
-    console.log("rewardAddr");
-    console.log(rewardAddr);
-    return rewardAddr;
-
-/*
     const Cardano = await EmurgoModule.CardanoWasm();
-    console.log("hey");
     const currentAccount = await getAccountFromDb();
-    console.log("currentAccount");
-    console.log(currentAccount);
-    console.log(currentAccount.stakeAddress);
     return Buffer.from(
         Cardano.Address.from_bech32(currentAccount.stakeAddress).to_bytes(),
         'hex'
     ).toString('hex');
-    */
 };
 
 export const getCurrentAccountIndex = () => {}

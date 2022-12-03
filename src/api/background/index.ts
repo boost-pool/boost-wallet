@@ -45,9 +45,6 @@ app.add(METHOD.getBalance, (request, sendResponse) => {
 });
 
 app.add(METHOD.enable, async (request, sendResponse) => {
-
-    console.log("app.add(METHOD.enable");
-    console.log(request);
     // @ts-ignore
     isWhitelisted(request.origin)
         .then(async (whitelisted) => {
@@ -148,15 +145,8 @@ app.add(METHOD.getAddress, async (request, sendResponse) => {
 });
 
 app.add(METHOD.getRewardAddress, async (request, sendResponse) => {
-    console.log("METHOD.getRewardAddress in background");
-    console.log("request2");
-    console.log(request);
-    console.log("sendResponse");
-    console.log(sendResponse);
     try {
         const address = await getRewardAddress();
-        console.log("address");
-        console.log(address);
         // @ts-ignore
         if (address) {
             sendResponse({
