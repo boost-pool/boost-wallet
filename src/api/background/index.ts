@@ -151,17 +151,34 @@ app.add(METHOD.getAddress, async (request, sendResponse) => {
 });
 
 app.add(METHOD.getRewardAddress, async (request, sendResponse) => {
-    const address = await getRewardAddress();
-    // @ts-ignore
-    if (address) {
-        sendResponse({
-            // @ts-ignore
-            id: request.id,
-            data: address,
-            target: TARGET,
-            sender: SENDER.extension,
-        });
-    } else {
+    console.log("METHOD.getRewardAddress in background");
+    console.log("request2");
+    console.log(request);
+    console.log("sendResponse");
+    console.log(sendResponse);
+    try {
+        const address = await getRewardAddress();
+        console.log("address");
+        console.log(address);
+        // @ts-ignore
+        if (address) {
+            sendResponse({
+                // @ts-ignore
+                id: request.id,
+                data: address,
+                target: TARGET,
+                sender: SENDER.extension,
+            });
+        } else {
+            sendResponse({
+                // @ts-ignore
+                id: request.id,
+                error: APIError.InternalError,
+                target: TARGET,
+                sender: SENDER.extension,
+            });
+        }
+    } catch (e) {
         sendResponse({
             // @ts-ignore
             id: request.id,

@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const config = {
    entry:{
@@ -56,6 +57,11 @@ const config = {
       }
    },
    plugins: [
+      new webpack.ProgressPlugin(),
+      new CleanWebpackPlugin({
+         verbose: true,
+         cleanStaleWebpackAssets: true,
+      }),
       new HtmlWebpackPlugin({
          template: path.join(__dirname, "src", "index.html"),
       }),
@@ -80,6 +86,9 @@ const config = {
          Buffer: ['buffer', 'Buffer'],
       }),
    ],
+   infrastructureLogging: {
+      level: 'info',
+   },
 };
 
 module.exports = config;

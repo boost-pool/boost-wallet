@@ -25,39 +25,18 @@ const logDeprecated = () => {
   return true;
 };
 
-//Initial version (deprecated soon)
-/*
-window.cardano = {
-  ...(window.cardano || {}),
-  enable: () => logDeprecated() && enable(),
-  isEnabled: () => logDeprecated() && isEnabled(),
-  getBalance: () => logDeprecated() && getBalance(),
-  signData: (address, payload) => logDeprecated() && signData(address, payload),
-  signTx: (tx, partialSign) => logDeprecated() && signTx(tx, partialSign),
-  submitTx: (tx) => logDeprecated() && submitTx(tx),
-  getUtxos: (amount, paginate) => logDeprecated() && getUtxos(amount, paginate),
-  getCollateral: () => logDeprecated() && getCollateral(),
-  getUsedAddresses: async () => logDeprecated() && [await getAddress()],
-  getUnusedAddresses: async () => logDeprecated() && [],
-  getChangeAddress: () => logDeprecated() && getAddress(),
-  getRewardAddress: () => logDeprecated() && getRewardAddress(),
-  getNetworkId: () => logDeprecated() && getNetworkId(),
-  onAccountChange: (callback) =>
-    logDeprecated() && on(EVENT.accountChange, callback),
-  onNetworkChange: (callback) =>
-    logDeprecated() && on(EVENT.networkChange, callback),
-  off,
-  _events: {},
-};
-*/
-
 // // CIP-30
 
+console.log("try to inject into window.cardano");
+console.log("window.cardano");
+console.log(window.cardano);
 window.cardano = {
   ...(window.cardano || {}),
   boost: {
     enable: async () => {
+      console.log("Is enabled?1111")
       if (await enable()) {
+        console.log("Is enabled!")
         return {
           getBalance: () => getBalance(),
           signData: (address, payload) => signDataCIP30(address, payload),
@@ -84,3 +63,6 @@ window.cardano = {
     _events: {},
   },
 };
+
+console.log("window.cardano.boost");
+console.log(window.cardano.boost);

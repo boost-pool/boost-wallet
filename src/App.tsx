@@ -14,6 +14,7 @@ import Network from "./pages/Network";
 // @ts-ignore
 import {getRouter} from "./store/selectors";
 import Store from './store';
+import Enable from "./popup/components/Enable";
 
 export const ROUTES = {
     MAIN: '/',

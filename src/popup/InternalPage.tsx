@@ -34,23 +34,14 @@ const MainRoutes = () => {
    const isMounted = useIsMounted();
 
     const init = async () => {
-        const req = await controller.requestData();
-        setRequest(request);
+        setRequest(await controller.requestData());
         console.log("req");
-        console.log(req);
+        console.log(request);
     };
 
 
     useEffect(() => {
-      const initPage = async () => {
-          await init();
-      }
-      if (isMounted.current) {
-         // call the function
-         initPage()
-             // make sure to catch any error
-             .catch(console.error)
-      }
+        init();
    }, [])
 
    useEffect(() => {
@@ -74,7 +65,7 @@ const MainRoutes = () => {
         }
          */
 
-        return <Enable />
+        return <Enable request={request} controller={controller}/>
     }
 
    return (

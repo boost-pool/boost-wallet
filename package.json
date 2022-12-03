@@ -56,11 +56,14 @@
       "bip39": "^3.0.4",
       "buffer": "^6.0.3",
       "classnames": "^2.2.6",
+      "clean-webpack-plugin": "^4.0.0",
       "cordova-plugin-nativegeocoder": "^3.4.1",
       "crypto-browserify": "^3.12.0",
       "crypto-hash": "^2.0.1",
       "crypto-random-string": "2.0.0",
       "eslint": "7.14.0",
+      "extensionizer": "1.0.1",
+      "i18next": "19.8.4",
       "jquery": "^3.6.0",
       "moment": "^2.29.4",
       "moment-range": "^4.0.2",
@@ -73,6 +76,7 @@
       "react-confirm-alert": "^3.0.6",
       "react-dom": "^18.2.0",
       "react-feather": "^2.0.10",
+      "react-i18next": "11.8.2",
       "react-jdenticon": "^1.0.0",
       "react-lottie-player": "^1.5.0",
       "react-optimized-image": "^0.4.1",
@@ -93,10 +97,7 @@
       "use-back": "^1.0.1",
       "web-vitals": "^2.1.4",
       "webpack-dev-server": "^4.11.1",
-      "workbox-webpack-plugin": "^6.5.4",
-      "i18next": "19.8.4",
-      "react-i18next": "11.8.2",
-      "extensionizer": "1.0.1"
+      "workbox-webpack-plugin": "^6.5.4"
    },
    "browserslist": {
       "production": [

@@ -21,7 +21,7 @@ import {Browser} from "@capacitor/browser";
 import {useTranslation} from "react-i18next";
 
 // @ts-ignore
-const Accounts = ({ open, onDidDismiss }) => {
+const Accounts = ({ open }) => {
 
   const { t } = useTranslation();
 
@@ -37,6 +37,9 @@ const Accounts = ({ open, onDidDismiss }) => {
   const disabledButton = !validateMnemonic(seed)
     || name.length <= 1
     || password.length <= 7;
+
+  console.log("disabledButton");
+  console.log(disabledButton);
 
   const useIsMounted = () => {
     const isMounted = useRef(false)
@@ -63,7 +66,7 @@ const Accounts = ({ open, onDidDismiss }) => {
 
   useEffect(() => {
     App.addListener('backButton', data => {
-      onDidDismiss();
+
     });
   }, []);
 
@@ -131,6 +134,9 @@ const Accounts = ({ open, onDidDismiss }) => {
   }
 
   const onConfirm = async () => {
+
+    console.log("on confirm");
+    console.log(disabledButton);
     if (!disabledButton){
       let acc = await createAccount(name,seed,password);
 
@@ -145,12 +151,11 @@ const Accounts = ({ open, onDidDismiss }) => {
       setSeed('');
       setName('');
       setPassword('');
-      onDismissModal();
+      onResetState();
     }
   }
 
-  const onDismissModal = () => {
-    onDidDismiss();
+  const onResetState = () => {
     setSeed('');
     setName('');
     setPassword('');

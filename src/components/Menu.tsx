@@ -6,8 +6,6 @@ import Jdenticon from 'react-jdenticon';
 
 // @ts-ignore
 import { setAccount, setSettings } from '../../store/actions';
-import * as selectors from '../store/selectors';
-import Store from '../store';
 import {writeToClipboard} from "../utils/clipboard";
 import {Browser} from "@capacitor/browser";
 

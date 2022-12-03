@@ -146,10 +146,19 @@ export const getWhitelistInDb = async () => {
 
 export const addOriginToWhitelist = async (origin:string) => {
 
-  let external = await get("external");
+  let external = (await get("external")) || [];
 
   if (external && !external.whitelist.includes(origin)){
     external.whitelist = [...external.whitelist, origin];
+    await set("external", external);
+  }
+}
+
+export const removeOriginFromWhitelist = async (origin:string) => {
+
+  let external = await get("external");
+  if (external && external.whitelist.includes(origin)){
+    external.whitelist = external.whitelist.filter((ori: string) => ori !== origin)
     await set("external", external);
   }
 }

@@ -1,4 +1,4 @@
-export const TARGET = 'nami-wallet';
+export const TARGET = 'boost-wallet';
 export const SENDER = { extension: 'extension', webpage: 'webpage' };
 export const METHOD = {
   isWhitelisted: 'isWhitelisted',
