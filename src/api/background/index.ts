@@ -14,9 +14,6 @@ import {
 } from '../extension';
 import { Messaging } from './messaging';
 import { APIError, METHOD, POPUP, SENDER, TARGET } from './config';
-// @ts-ignore
-import extension from 'extensionizer';
-const extensionStorage = extension.storage && extension.storage.local;
 
 const app = Messaging.createBackgroundController();
 

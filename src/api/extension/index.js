@@ -106,9 +106,18 @@ export const getAddress = async () => {
 };
 
 export const getRewardAddress = async () => {
-    console.log("getRewardAddress1335");
+    console.log("getRewardAddress13355");
 
-    console.log("hey1");
+    console.log("hey11111");
+    console.log("Loader");
+    console.log(Loader);
+    console.log("EmurgoModule");
+    console.log(EmurgoModule);
+
+    console.log("try1")
+    await EmurgoModule.CardanoWasm()
+    console.log("try2")
+
     return "stake_test1uqald738wpra0dsnw9d672uu25qgtjvxmqzv90un97epwfse720ee";
 
     await Loader.load();
