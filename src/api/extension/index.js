@@ -2,8 +2,6 @@ import {POPUP_WINDOW, STORAGE} from "../background/config";
 import {addOriginToWhitelist, getAccountFromDb, getWhitelistInDb, removeOriginFromWhitelist} from "../../db";
 import {EmurgoModule} from "../../lib/emurgo";
 
-Loader.load();
-
 export const getStorage = (key) => {}
 export const setStorage = (item) => {}
 
