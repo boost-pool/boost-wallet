@@ -14,7 +14,7 @@ import {
 } from '../store/actions';
 import { set } from '../db/storage';
 import { getSettings } from '../store/selectors';
-import { getKeyByValue } from '../utils/utils';
+import {capitalizeFirstLetter, getKeyByValue} from '../utils/utils';
 import {getAccountFromDb, getSettingsFromDb, setBlockfrostInDb, setNetworkInDb, setSubmitUrlInDb} from '../db';
 import { BLOCKFROST_DEFAULT_URL, BLOCKFROST_TOKEN } from '../../config';
 import { writeToClipboard } from '../utils/clipboard';
@@ -36,7 +36,7 @@ const Settings = () => {
 
   const [selected, setSelected] = useState(settings.language);
 
-  const [networkSelected, setNetworkSelected] = useState(settings?.network?.net || "Testnet");
+  const [networkSelected, setNetworkSelected] = useState(settings?.network?.net || "preprod");
 
   const useIsMounted = () => {
     const isMounted = useRef(false)
@@ -208,7 +208,7 @@ const Settings = () => {
                   <input
                     value={settings?.network?.blockfrost?.token || BLOCKFROST_TOKEN}
                     onChange={(e) => handleBlockfrostToken(e.target.value)}
-                    className="mr-1 text-gray-600 focus:text-gray-700 focus:outline-none bg-transparent cursor-pointer"
+                    className="mr-1 px-2 text-gray-600 focus:text-gray-700 focus:outline-none bg-transparent cursor-pointer"
                     placeholder="Token Id"
                   />
                   <svg
@@ -220,15 +220,15 @@ const Settings = () => {
                 value={settings?.network?.blockfrost?.url || BLOCKFROST_DEFAULT_URL}
                 onChange={(event) => handleBlockfrostUrl(event.target.value)}
                 type="text"
-                className="w-full mt-2 bg-gray-100 rounded border bg-opacity-50 border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:bg-transparent focus:border-indigo-500 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"/>
+                className="w-full px-2 mt-2 bg-gray-100 rounded border bg-opacity-50 border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:bg-transparent focus:border-indigo-500 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"/>
             </div>
-            <Listbox value={settings?.network?.net} onChange={handleSelectNetwork} >
+            <Listbox value={networkSelected} onChange={handleSelectNetwork} >
               <div className="relative mt-1 py-1">
                 <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                  <span className="block truncate">{networkSelected}</span>
+                  <span className="block truncate">{capitalizeFirstLetter(networkSelected)}</span>
                   <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
+                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </span>
                 </Listbox.Button>
                 <Transition
                   as={Fragment}
@@ -236,7 +236,7 @@ const Settings = () => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <Listbox.Options className="absolute mt-1 max-h-24 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                  <Listbox.Options className="absolute mt-1 max-h-32 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                     {['preprod', 'preview', 'mainnet'].map((net:string,netIdx:number) => (
                       <Listbox.Option
                         key={netIdx}
@@ -255,7 +255,7 @@ const Settings = () => {
                           selected ? 'font-medium' : 'font-normal'
                         }`}
                       >
-                        {net}
+                        {capitalizeFirstLetter(net)}
                       </span>
                           </>
                         )}
@@ -282,7 +282,7 @@ const Settings = () => {
                 type="text"
                 id="hero-field"
                 name="hero-field"
-                className="w-full bg-gray-100 rounded border bg-opacity-50 border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:bg-transparent focus:border-indigo-500 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"/>
+                className="w-full px-2 bg-gray-100 rounded border bg-opacity-50 border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:bg-transparent focus:border-indigo-500 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"/>
             </div>
           </div>
         </li>

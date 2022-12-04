@@ -55,3 +55,8 @@ export const fromUTF8 = (utf8: string) => {
 
     return fromBytes(Buffer.from(utf8, 'utf-8'));
 };
+
+
+export const capitalizeFirstLetter =(string:string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
