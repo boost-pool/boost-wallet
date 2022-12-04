@@ -31,18 +31,11 @@ export const getUsedCollateral = async () => {
 }
 export const getUsedUTxOs = async () => {
 
-  console.log("getUsedUTxOs");
-
   let account = await getAccountFromDb();
-  console.log("account in getUsedUTxOs 0000");
-  console.log(account);
+
   const network = await getNetworkFromDb();
   account = account[network.net];
 
-  console.log("network");
-  console.log(network);
-  console.log("account in getUsedUTxOs");
-  console.log(account);
   if (!account) return;
 
   const Cardano = await EmurgoModule.CardanoWasm();
@@ -93,8 +86,6 @@ export const signAndSubmit = async (
 
   if (!currentAccount) return {error: "Account not found"};
 
-  console.log("currentAccount signAndSubmit");
-  console.log(currentAccount);
   try {
 
     const filteredOutputs = outputs.filter(output => output.addressToSend !== ''

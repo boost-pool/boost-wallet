@@ -38,9 +38,6 @@ export const setObject = async (key:string, id:string, val:any) => {
 
   try {
     const all = await get(key) || [];
-    console.log("setObject");
-    console.log("all");
-    console.log(all);
     all[id] = val;
     await set(key, all);
     return true;
