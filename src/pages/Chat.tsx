@@ -10,7 +10,7 @@ import {getAccount, getRouter} from "../store/selectors";
 import Store from '../store';
 import {handlePath} from "../components/routing";
 import {ROUTES} from "../App";
-import roomSVG from "../resources/img/room.svg";
+//import roomSVG from "../resources/img/room.svg";
 
 
 export default function P2PChat() {
