@@ -64,15 +64,18 @@ export const updateAccountByNetworkInDb = async (network:string, account:any) =>
   console.log("updateAccountInDb account");
   console.log(account);
   if (account){
-    let acc = await getObject("accounts", account.name);
+    let accs = await get("accounts");
 
-    if (!acc) return;
+    if (!accs) return;
+
+    const acc = accs[account.name];
 
     acc[network] = account;
     console.log("updated acc by network")
     console.log(network)
     console.log(acc);
-    await setObject("accounts", account.name, acc);
+    accs[account.name] = acc;
+    await set("accounts", accs);
   }
 }
 
