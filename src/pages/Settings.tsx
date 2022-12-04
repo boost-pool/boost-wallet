@@ -15,7 +15,7 @@ import {
 import { set } from '../db/storage';
 import { getSettings } from '../store/selectors';
 import { getKeyByValue } from '../utils/utils';
-import {getAccountFromDb, getSettingsFromDb, setBlockfrostInDb, setSubmitUrlInDb} from '../db';
+import {getAccountFromDb, getSettingsFromDb, setBlockfrostInDb, setNetworkInDb, setSubmitUrlInDb} from '../db';
 import { BLOCKFROST_DEFAULT_URL, BLOCKFROST_TOKEN } from '../../config';
 import { writeToClipboard } from '../utils/clipboard';
 import Toast from '../components/Toast';
@@ -84,6 +84,7 @@ const Settings = () => {
     setBlockfrostNetwork(network);
     const account = await getAccountFromDb();
     setAccount(account[network]);
+    await setNetworkInDb(network);
   }
 
   const handleBlockfrostUrl = async (url:string) => {

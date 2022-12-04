@@ -29,9 +29,6 @@ const MainRoutes = () => {
 
     const router = Store.useState(getRouter);
 
-    console.log("router");
-    console.log(router);
-
     const useIsMounted = () => {
       const isMounted = useRef(false)
       // @ts-ignore

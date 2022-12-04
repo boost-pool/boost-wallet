@@ -14,6 +14,7 @@ import { writeToClipboard } from '../../utils/clipboard';
 import Toast from '../Toast';
 import { Browser } from '@capacitor/browser';
 import {useTranslation} from "react-i18next";
+import {setSelectedAddressInDb} from "../../db";
 
 interface IReceiveModal {
   open: boolean,
@@ -27,11 +28,7 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
 
   const addresses = account && account.externalPubAddress || [];
 
-  const [selected, setSelected] = useState(account && account.externalPubAddress && account.externalPubAddress.length
-    && account.externalPubAddress[0]
-    || []);
-
-  let addr = account && account.externalPubAddress && account.externalPubAddress.length && account.externalPubAddress[0]?.address || 'nonAddr';
+  const [selected, setSelected] = useState(account && account.selectedAddress && account.selectedAddress.address || 'nonAddr');
 
   function closeModal() {
     props.onClose();
@@ -40,7 +37,7 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
   const renderQrView = () => {
 
     const qrImage = qrCode(0, 'M');
-    qrImage.addData(addr);
+    qrImage.addData(selected);
     qrImage.make();
     return (
       <div className="grid place-items-center mt-4">
@@ -66,18 +63,29 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
     }
   }
 
+  const onCopy = (content:string) => {
+    writeToClipboard(content).then(()=>{
+      Toast.info("Copy success")
+    });
+  }
+
   const openCapacitorSite = async (site:string) => {
     await Browser.open({ url: site });
+  };
+
+  const handleSelectAddress = async (address:string) => {
+    setSelected(address);
+    await setSelectedAddressInDb(address)
   };
 
   function AddressesList(addresses:any[]) {
     return (
       <div className="grid place-items-center relative z-20">
         <div className="w-80 z-20">
-          <Listbox value={selected} onChange={setSelected}>
+          <Listbox value={selected} onChange={handleSelectAddress}>
             <div className="relative mt-1">
               <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                <span className="block truncate">{selected && selected.address || 'nonAddr'}</span>
+                <span className="block truncate">{selected || 'nonAddr'}</span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             </span>
               </Listbox.Button>
@@ -96,7 +104,7 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
                           active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
                         }`
                       }
-                      value={addr}
+                      value={addr.address}
                       onChange={() => {}}
                     >
                       {({ selected }) => (
@@ -180,7 +188,13 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
                   {renderQrView()}
 
                   <div className="as-text">
-                    {addr}
+                    <input
+                        disabled={true}
+                        onChange={(e) => {}}
+                        className="focus:text-gray-700 focus:outline-none w-full bg-transparent"
+                        // @ts-ignore
+                        value={selected}
+                    />
                   </div>
 
 
@@ -189,9 +203,7 @@ const ReceiveModal: FC<IReceiveModal> = (props) => {
                       <button
                         type="button"
                         className="mx-4 inline-flex float-right justify-end cursor-pointer rounded-md border border-transparent bg-orange-100 px-6 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={() => writeToClipboard(selected.address).then(()=>{
-                          Toast.info("Copy success")
-                        })}
+                        onClick={() => onCopy(selected)}
                       >
                         {/* @ts-ignore*/}
                         {t("receive.copy")}

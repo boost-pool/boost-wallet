@@ -16,9 +16,6 @@ import successAnimation from '../resources/lottie/success.json';
 const Send = ({ open }: any) => {
   const account = Store.useState(getAccount);
 
-  console.log("account in Send");
-  console.log(account);
-
   const { t } = useTranslation();
 
   const totalAda = account && account.balance ? (new BigNumber(account && account.balance)).div(new BigNumber(10).pow(6)).toString() : 0;

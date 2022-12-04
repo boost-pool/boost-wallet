@@ -61,34 +61,27 @@ export const setSettingsInDb = async (settings:any) => {
 }
 
 export const updateAccountByNetworkInDb = async (network:string, account:any) => {
-  console.log("updateAccountInDb account");
-  console.log(account);
   if (account){
-    let accs = await get("accounts");
-
-    if (!accs) return;
-
-    const acc = accs[account.name];
-
+    let acc = await getAccountFromDb();
+    if (!acc) return;
     acc[network] = account;
-    console.log("updated acc by network")
-    console.log(network)
-    console.log(acc);
-    accs[account.name] = acc;
-    await set("accounts", accs);
+    await setObject("accounts", acc.name, acc);
   }
 }
 
 export const setAccountInDb = async (account:any) => {
-  console.log("setAccountInDb account");
-  console.log(account);
-
-
-  console.log("try to store in db account");
   await setObject("accounts", account.name, account);
-  console.log(await getObject("accounts", account.name));
-
   return account.name;
+}
+
+export const setSelectedAddressInDb = async (address:string) => {
+
+  if (address){
+    let acc = await getAccountFromDb();
+    if (!acc) return;
+    acc.selectedAddress = address;
+    await setObject("accounts", acc.name, acc);
+  }
 }
 
 export const getNetworkFromDb = async () => {

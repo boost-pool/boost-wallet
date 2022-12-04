@@ -35,7 +35,7 @@ import txSendIcon from "../resources/img/txSend.png";
 // @ts-ignore
 import txReceiveIcon from "../resources/img/txReceive.png";
 import { useTranslation } from "react-i18next";
-import {getAccountFromDb, updateAccountByNetworkInDb, setAccountInDb} from "../db";
+import {getAccountFromDb, updateAccountByNetworkInDb, setAccountInDb, setNetworkInDb} from "../db";
 
 
 const icon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -57,10 +57,6 @@ export default function Home(props) {
    const [showReceive, setShowReceive] = useState(false);
    const settings = Store.useState(getSettings);
    const account = Store.useState(getAccount);
-
-   //const account = acc[settings.network.net];
-   //console.log("account in Home");
-   //console.log(account);
 
    let categories = {
       tokens: [
@@ -196,7 +192,6 @@ export default function Home(props) {
 
          const allTxHashes:string[] = [];
 
-         console.log("hey1")
          if (currentTxs){
             currentTxs.map((tx: { txHash: string; }) => {
                if (tx){
@@ -213,9 +208,7 @@ export default function Home(props) {
             }).filter((e: any) => e != undefined);
          }
 
-         console.log("hey2")
          if (uniqueArrayTxsList && uniqueArrayTxsList.length){
-            console.log("hey3")
             let addrsWithTxsList = [];
             addrsWithTxsList = (await Promise.all(
                 uniqueArrayTxsList.map(async tx => {
@@ -286,16 +279,10 @@ export default function Home(props) {
                //setAccountPendingTxs(pendingTxs);
             }
 
-
-            console.log("currentAccount");
-            console.log(currentAccount);
             let acc = await getAccountFromDb();
             acc[settings.network.net] = currentAccount;
-            console.log("acc");
-            console.log(acc);
             setAccount(currentAccount);
             await updateAccountByNetworkInDb(settings.network.net, currentAccount);
-            // await setObject("accounts", currentAccount.id.toString(), acc);
          }
       }
 

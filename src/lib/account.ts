@@ -34,13 +34,6 @@ export const createAccount = async (
 
   const Cardano = await EmurgoModule.CardanoWasm();
 
-  const network = await getNetworkFromDb();
-
-  console.log("network");
-  console.log(network);
-
-  const networkIndex = network === 'mainnet' ? MAINNET_NETWORK_INDEX : TESTNET_NETWORK_INDEX
-
   const privateKeyPtr = await generateWalletRootKey(mnemonic);
   // @ts-ignore
   const privateKeyHex = Buffer.from(privateKeyPtr.as_bytes()).toString('hex');
@@ -121,9 +114,6 @@ export const createAccount = async (
   };
 
   account = {...account, name, id: undefined}
-  console.log("\n\n\naccount created");
-  console.log(account);
-
   return account;
 }
 

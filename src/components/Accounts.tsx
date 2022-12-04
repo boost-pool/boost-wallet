@@ -34,11 +34,6 @@ const Accounts = ({}) => {
     || name.length <= 1
     || password.length <= 7;
 
-  console.log("disabledButton");
-  console.log(disabledButton);
-  console.log("validateMnemonic(seed)");
-  console.log(validateMnemonic(seed));
-
   const useIsMounted = () => {
     const isMounted = useRef(false)
     // @ts-ignore
@@ -81,7 +76,6 @@ const Accounts = ({}) => {
     setDefaultJdenticond(name);
   }
   const handlePassword = (pass:string) => {
-    console.log("handlePassword");
     setPassword(pass);
   }
   const handleSelectAccount= async (account:any) => {
@@ -122,16 +116,8 @@ const Accounts = ({}) => {
 
   const onConfirm = async () => {
 
-    console.log("on confirm");
-    console.log(disabledButton);
     if (!disabledButton){
       let acc = await createAccount(name,seed,password);
-
-      console.log("acc");
-      console.log(acc);
-
-      // @ts-ignore
-      //const id = await setNewObject("accounts", acc);
 
       acc.id = await setAccountInDb(acc);
       setAccount({...acc[settings.network.net], id: acc.id, name: acc.name});
