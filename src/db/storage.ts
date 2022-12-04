@@ -37,11 +37,11 @@ export const clear = async () => {
 export const setObject = async (key:string, id:string, val:any) => {
 
   try {
-    const all = await storage.get(key);
-    let objIndex = 0;
-    if (all) objIndex = await all.findIndex((a: { id: string; }) => parseInt(a.id) === parseInt(id));
-
-    all[objIndex] = val;
+    const all = await get(key) || [];
+    console.log("setObject");
+    console.log("all");
+    console.log(all);
+    all[id] = val;
     await set(key, all);
     return true;
   } catch (e) {
@@ -84,25 +84,20 @@ export const setNewObject = async (key:string, val:any) => {
 
 export const removeObject = async (key:string, id:string) => {
 
-  const all = await storage.get(key);
-  const objIndex = await all.findIndex((a: { id: string; }) => {
-    if (a !== undefined) return parseInt(a.id) === parseInt(id);
-    else return false;
-  });
+  let all = await get(key) || [];
+  all = all.filter((a: { id: string; }) => (a.id) !== (id))
 
-  all.splice(objIndex, 1);
-  set(key, all);
+  await set(key, all);
 }
 
 export const getObject = async (key:string, id:string) => {
 
   try {
-    const all = await storage.get(key);
-    const obj = await all && all.length && all.find((a: { id: string; }) => {
-      if (a !== undefined) return parseInt(a.id) === parseInt(id);
-      else return false;
-    }) || {};
-    return obj;
+    const all = await get(key) || [];
+
+    if (all && all.length){
+      return all.filter;
+    }
   } catch (e) {
     console.log(e);
   }

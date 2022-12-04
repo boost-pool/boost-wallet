@@ -1,5 +1,6 @@
-import { createStore, get, getObject, set } from './storage';
-import { BLOCKFROST_DEFAULT_URL, BLOCKFROST_TOKEN, SUBMIT_DEFAULT_URL } from '../../config';
+import {createStore, get, getObject, set, setObject} from './storage';
+import {BLOCKFROST_DEFAULT_URL, BLOCKFROST_TOKEN, DEFAULT_NETWORK, SUBMIT_DEFAULT_URL} from '../../config';
+import {maxId} from "../utils/utils";
 
 export const DB_NAME = "WALLET_DB";
 
@@ -12,18 +13,21 @@ export const initDb = async () => {
 export const getAccountsFromDb = async () => {
   return  await get("accounts");
 }
-export const getAccountFromDb = async (id?:number) => {
+export const getAccountFromDb = async (name?:string) => {
 
-  const settings = await getSettingsFromDb();
-  let currentIndex = id ? id : settings && settings.currentAccount;
-  const accounts = await get("accounts");
-  if (currentIndex < 0) {
-    if (accounts && accounts.length){
-      currentIndex = 0;
-    }
+  let settings = await getSettingsFromDb();
+  let currentName = name ? name : settings && settings.currentAccount;
+
+  const accounts = await get("accounts") || [];
+  if (accounts){
+    // @ts-ignore
+    return accounts[currentName];
   }
-  return await getObject("accounts", currentIndex || 0);
-
+  return {}
+}
+export const removeAccountFromDb = async (name:string) => {
+  let accounts = await get("accounts");
+  await set("accounts", accounts.filter((acc: { name: string; }) => acc.name !== name));
 }
 
 export const getSettingsFromDb = async () => {
@@ -43,7 +47,7 @@ export const getSettingsFromDb = async () => {
           url: BLOCKFROST_DEFAULT_URL,
           token: BLOCKFROST_TOKEN
         },
-        net: "Testnet",
+        net: "preprod",
         submit: SUBMIT_DEFAULT_URL
       }
     }
@@ -54,6 +58,34 @@ export const setSettingsInDb = async (settings:any) => {
   if (settings){
     await set("settings", settings);
   }
+}
+
+export const updateAccountByNetworkInDb = async (network:string, account:any) => {
+  console.log("updateAccountInDb account");
+  console.log(account);
+  if (account){
+    let acc = await getObject("accounts", account.name);
+
+    if (!acc) return;
+
+    acc[network] = account;
+    console.log("updated acc by network")
+    console.log(network)
+    console.log(acc);
+    await setObject("accounts", account.name, acc);
+  }
+}
+
+export const setAccountInDb = async (account:any) => {
+  console.log("setAccountInDb account");
+  console.log(account);
+
+
+  console.log("try to store in db account");
+  await setObject("accounts", account.name, account);
+  console.log(await getObject("accounts", account.name));
+
+  return account.name;
 }
 
 export const getNetworkFromDb = async () => {
@@ -68,12 +100,12 @@ export const getNetworkFromDb = async () => {
         url: BLOCKFROST_DEFAULT_URL,
         token: BLOCKFROST_TOKEN
       },
-      net: "Testnet",
+      net: DEFAULT_NETWORK,
       submit: SUBMIT_DEFAULT_URL
     }
   }
 }
-export const setCurrentAccountInDb = async (id:number) => {
+export const setCurrentAccountInDb = async (id:string) => {
 
   let settings = await get("settings");
 

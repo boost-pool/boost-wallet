@@ -1,27 +1,23 @@
-
 import Store from '../store';
-import { getAccount, getSettings } from '../store/selectors';
-
-import { close } from 'ionicons/icons';
-import React, {Fragment, useEffect, useRef, useState} from 'react';
+import {getAccount, getSettings} from '../store/selectors';
+import React, {useEffect, useRef, useState} from 'react';
 // @ts-ignore
 import Jdenticon from 'react-jdenticon';
-import { createAccount, generateMnemonicSeed, validateMnemonic } from '../lib/account';
-import { setAccount, setSettings } from '../store/actions';
-import { App } from '@capacitor/app';
-import { get, removeObject, set, setNewObject } from '../db/storage';
+import {createAccount, generateMnemonicSeed, validateMnemonic} from '../lib/account';
+import {setAccount, setSettings} from '../store/actions';
+import {App} from '@capacitor/app';
+import {get, removeObject, set} from '../db/storage';
 
-import { getAccountFromDb, getSettingsFromDb, setCurrentAccountInDb } from '../db';
+import {getAccountFromDb, getNetworkFromDb, getSettingsFromDb, setAccountInDb, setCurrentAccountInDb} from '../db';
 
 import BigNumber from 'bignumber.js';
-import { addressSlice } from '../utils/utils';
-import { writeToClipboard } from '../utils/clipboard';
-import {Dialog, Transition} from "@headlessui/react";
+import {addressSlice} from '../utils/utils';
+import {writeToClipboard} from '../utils/clipboard';
 import {Browser} from "@capacitor/browser";
 import {useTranslation} from "react-i18next";
 
 // @ts-ignore
-const Accounts = ({ open }) => {
+const Accounts = ({}) => {
 
   const { t } = useTranslation();
 
@@ -40,6 +36,8 @@ const Accounts = ({ open }) => {
 
   console.log("disabledButton");
   console.log(disabledButton);
+  console.log("validateMnemonic(seed)");
+  console.log(validateMnemonic(seed));
 
   const useIsMounted = () => {
     const isMounted = useRef(false)
@@ -71,10 +69,7 @@ const Accounts = ({ open }) => {
   }, []);
 
   const generateSeed = () => {
-    console.log("generateSeed");
     const generatedSeed = generateMnemonicSeed(160);
-    console.log("generatedSeed");
-    console.log(generatedSeed);
     setSeed(generatedSeed);
     setDefaultJdenticond(generatedSeed)
   }
@@ -90,36 +85,26 @@ const Accounts = ({ open }) => {
     setPassword(pass);
   }
   const handleSelectAccount= async (account:any) => {
-    setAccount(account);
-    let settings = await getSettingsFromDb();
-    if (settings){
-      settings.currentAccount = account?.id;
-      setSettings(settings);
-    }
 
-    await setCurrentAccountInDb(account.id);
+    setAccount({...account[settings.network.net], name: account.name, id: account.id});
+    setSettings({...settings, currentAccount: account.name});
+
+    await setCurrentAccountInDb(account.name);
   }
 
-  const handleRemoveAccount = async (id:number) => {
+  const handleRemoveAccount = async (name:string) => {
     let accss = await get("accounts");
 
     if (!accss || accss.length <= 1){
       await set("accounts", []);
-      await setCurrentAccountInDb(-1);
+      await setCurrentAccountInDb("");
     } else {
-
-      await removeObject("accounts", id.toString());
+      await removeObject("accounts", name);
       accss = await get("accounts");
 
       let settings = await getSettingsFromDb();
-      if (settings.currentAccount === id){
-
-        const objIndex = await accss.findIndex((a: { id: string; }) => {
-          if (a !== undefined) return parseInt(a.id) >= 0;
-          else return false;
-        });
-
-        settings.currentAccount = accss && accss.length  && accss[objIndex]? accss[objIndex].id : -1
+      if (settings.currentAccount === name){
+        settings.currentAccount = accss && accss.length && accss[0].name;
         await setCurrentAccountInDb(settings.currentAccount);
         setSettings(settings);
       }
@@ -127,7 +112,9 @@ const Accounts = ({ open }) => {
 
 
     const account = await getAccountFromDb();
-    setAccount(account);
+    const network = await getNetworkFromDb();
+
+    setAccount(account[network.net]);
 
     const accs = await get("accounts") || [];
     setAccounts(accs);
@@ -140,11 +127,15 @@ const Accounts = ({ open }) => {
     if (!disabledButton){
       let acc = await createAccount(name,seed,password);
 
+      console.log("acc");
+      console.log(acc);
+
       // @ts-ignore
-      acc.id = await setNewObject("accounts", acc);
-      setAccount(acc);
-      // @ts-ignore
-      await setCurrentAccountInDb(acc.id);
+      //const id = await setNewObject("accounts", acc);
+
+      acc.id = await setAccountInDb(acc);
+      setAccount({...acc[settings.network.net], id: acc.id, name: acc.name});
+      await setCurrentAccountInDb(acc.name);
       // @ts-ignore
       setAccounts(prevState => [...prevState, acc])
 
@@ -212,25 +203,22 @@ const Accounts = ({ open }) => {
 
               <div className="p-2 w-full flex flex-wrap mb-8">
                 {
-                  accounts && accounts.map((acc, index) => {
-
-                    return <span
-                        key={index}
-                        className="mx-2 cursor-pointer"
-                        onClick={() => handleSelectAccount(acc)}
+                  accounts && Object.keys(accounts).map((key, index) => {
+                    // @ts-ignore
+                    return <span key={index} className="mx-2 cursor-pointer" onClick={() => handleSelectAccount(accounts[key])}
                     >
                       <span
                           className="pr-4 pl-2 py-2 rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center w-max cursor-pointer active:bg-gray-300 transition duration-300 ease">
 
                         <button className="bg-transparent hover focus:outline-none">
                             {/* @ts-ignore*/}
-                            <Jdenticon size="20" value={acc.name} />
+                            <Jdenticon size="20" value={accounts[key].name} />
                           </button>
                         {/* @ts-ignore*/}
-                        {acc.name}
+                        {accounts[key].name}
                         <button
                             // @ts-ignore
-                            onClick={() =>  handleRemoveAccount(acc.id)}
+                            onClick={() =>  handleRemoveAccount(accounts[key].name)}
                             className="bg-transparent hover focus:outline-none">
                             <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times"
                                  className="w-3 ml-3" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -390,7 +378,7 @@ const Accounts = ({ open }) => {
 
       <>
         {
-          accounts.length ? <>
+          Object.keys(accounts).length ? <>
             {RenderAccounts()}
             <div className="relative flex pt-12 items-center">
               <div className="flex-grow border-t border-gray-400"></div>

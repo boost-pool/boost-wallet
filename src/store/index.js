@@ -23,7 +23,7 @@ const Store = new PullStateStore({
         url: BLOCKFROST_DEFAULT_URL,
         token: BLOCKFROST_TOKEN
       },
-      net: "Testnet",
+      net: "preprod",
       submit: SUBMIT_DEFAULT_URL
     }
   }

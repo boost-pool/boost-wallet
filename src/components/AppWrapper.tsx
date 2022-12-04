@@ -52,21 +52,15 @@ const AppWrapper = (props) => {
   const initApp = async () => {
     await createStore(DB_NAME);
 
-    const account = await getAccountFromDb();
-    setAccount(account);
-
     let settings = await getSettingsFromDb();
-    settings.currentAccount = account?.id;
+    const account = await getAccountFromDb();
+    console.log("initApp");
+    console.log(account);
     setLanguage(settings.language);
-    /*
-    i18n.changeLanguage(SUPPORTED_LANGUAGES[settings.language]).then(async _ => {
 
-    });
-     */
+    setAccount({...account[settings.network.net], id: account.id,  name: account.name});
+
     setSettings(settings);
-    await setSettingsInDb(settings);
-    await setExternalInDb({whitelist: []});
-
   }
 
   useEffect(() => {

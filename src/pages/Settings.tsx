@@ -4,6 +4,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import Store from '../store';
 // @ts-ignore
 import {
+  setAccount,
   setBlockfrostNetwork,
   setBlockfrostToken,
   setBlockfrostUrl,
@@ -14,7 +15,7 @@ import {
 import { set } from '../db/storage';
 import { getSettings } from '../store/selectors';
 import { getKeyByValue } from '../utils/utils';
-import { getSettingsFromDb, setBlockfrostInDb, setSubmitUrlInDb } from '../db';
+import {getAccountFromDb, getSettingsFromDb, setBlockfrostInDb, setSubmitUrlInDb} from '../db';
 import { BLOCKFROST_DEFAULT_URL, BLOCKFROST_TOKEN } from '../../config';
 import { writeToClipboard } from '../utils/clipboard';
 import Toast from '../components/Toast';
@@ -81,6 +82,8 @@ const Settings = () => {
   const handleSelectNetwork = async (network:string) => {
     setNetworkSelected(network);
     setBlockfrostNetwork(network);
+    const account = await getAccountFromDb();
+    setAccount(account[network]);
   }
 
   const handleBlockfrostUrl = async (url:string) => {
@@ -233,15 +236,15 @@ const Settings = () => {
                   leaveTo="opacity-0"
                 >
                   <Listbox.Options className="absolute mt-1 max-h-24 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    {['preprod'].map((lang:string,langIdx:number) => (
+                    {['preprod', 'preview', 'mainnet'].map((net:string,netIdx:number) => (
                       <Listbox.Option
-                        key={langIdx}
+                        key={netIdx}
                         className={({ active }) =>
                           ` z-[999] relative cursor-default select-none py-2 pl-4 pr-4 ${
                             active ? 'bg-amber-100 text-amber-900  z-[999]' : 'text-gray-900 bg-white'
                           }`
                         }
-                        value={lang}
+                        value={net}
                         onChange={() => {}}
                       >
                         {({ selected }) => (
@@ -251,7 +254,7 @@ const Settings = () => {
                           selected ? 'font-medium' : 'font-normal'
                         }`}
                       >
-                        {lang}
+                        {net}
                       </span>
                           </>
                         )}

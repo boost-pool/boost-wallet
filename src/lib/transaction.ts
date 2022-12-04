@@ -1,7 +1,7 @@
 
 import { getProtocolParameters, submitTx } from '../api/blockfrost';
 import { Transaction } from '@martifylabs/mesh';
-import { getAccountFromDb } from '../db';
+import {getAccountFromDb, getNetworkFromDb, getSettingsFromDb} from '../db';
 import { EmurgoModule } from './emurgo';
 import BigNumber from 'bignumber.js';
 import { amountIsValid } from '../utils/utils';
@@ -18,8 +18,8 @@ export interface IAsset {
 
 export const getUsedAddress = async () => {
   const account = await getAccountFromDb();
-
-  const address = account.externalPubAddress[0];
+  const network = await getNetworkFromDb();
+  const address = account[network.net].externalPubAddress[0];
 
   const Cardano = await EmurgoModule.CardanoWasm();
   return Cardano.Address.from_bech32(address);
@@ -30,8 +30,19 @@ export const getUsedCollateral = async () => {
   return [];
 }
 export const getUsedUTxOs = async () => {
-  const account = await getAccountFromDb();
 
+  console.log("getUsedUTxOs");
+
+  let account = await getAccountFromDb();
+  console.log("account in getUsedUTxOs 0000");
+  console.log(account);
+  const network = await getNetworkFromDb();
+  account = account[network.net];
+
+  console.log("network");
+  console.log(network);
+  console.log("account in getUsedUTxOs");
+  console.log(account);
   if (!account) return;
 
   const Cardano = await EmurgoModule.CardanoWasm();
@@ -82,6 +93,8 @@ export const signAndSubmit = async (
 
   if (!currentAccount) return {error: "Account not found"};
 
+  console.log("currentAccount signAndSubmit");
+  console.log(currentAccount);
   try {
 
     const filteredOutputs = outputs.filter(output => output.addressToSend !== ''

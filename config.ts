@@ -1,5 +1,6 @@
 
 export const NETWORK = "preprod";
+export const DEFAULT_NETWORK = "preprod";
 
 export const BLOCKFROST_TOKEN = "preprodBVOYg2bl1eg4ohPQJW9EpCgQOO0WSERQ";
 

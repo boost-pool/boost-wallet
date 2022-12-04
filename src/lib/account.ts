@@ -3,7 +3,7 @@ const Buffer = require('buffer/').Buffer;
 import {
   DERIVE_COIN_TYPE,
   DERIVE_PUROPOSE,
-  GLOBAL_TAG,
+  GLOBAL_TAG, MAINNET_NETWORK_INDEX,
   numbers,
   TESTNET_NETWORK_INDEX,
   TOTAL_ADDRESS_INDEX
@@ -12,6 +12,7 @@ import cryptoRandomString from 'crypto-random-string';
 import { EmurgoModule } from './emurgo';
 import { customAlphabet } from 'nanoid';
 import { fromUTF8 } from '../utils/utils';
+import {getNetworkFromDb} from "../db";
 
 export const generateMnemonicSeed = (size: number) => {
   return generateMnemonic(size);
@@ -33,6 +34,13 @@ export const createAccount = async (
 
   const Cardano = await EmurgoModule.CardanoWasm();
 
+  const network = await getNetworkFromDb();
+
+  console.log("network");
+  console.log(network);
+
+  const networkIndex = network === 'mainnet' ? MAINNET_NETWORK_INDEX : TESTNET_NETWORK_INDEX
+
   const privateKeyPtr = await generateWalletRootKey(mnemonic);
   // @ts-ignore
   const privateKeyHex = Buffer.from(privateKeyPtr.as_bytes()).toString('hex');
@@ -46,75 +54,32 @@ export const createAccount = async (
 
   // Stake key
   const stakeKey = accountKey.derive(
-    numbers.ChainDerivations.ChimericAccount
+      numbers.ChainDerivations.ChimericAccount
   );
   const stakeKey2 = stakeKey.derive(numbers.StakingKeyIndex);
   const stakeKey3 = stakeKey2.to_raw_key();
 
   const stakeKeyPub = stakeKey3.to_public();
 
-  const stakeAddress = (
+  const stakeAddressTestnet = (
       Cardano.RewardAddress.new(
-      parseInt(TESTNET_NETWORK_INDEX),
+          0,
           Cardano.StakeCredential.from_keyhash(stakeKeyPub.hash())
-    ).to_address()
+      ).to_address()
   ).to_bech32();
 
-  const externalPubAddress = [];
-  for (let i = 0; i < TOTAL_ADDRESS_INDEX; i++) {
-    // eslint-disable-next-line no-await-in-loop
-    const externalPubAddressM = await generatePayAddress(
-      accountKey,
-      0,
-      i,
-      ["preprod", "preview", "testnet"].includes("testnet") ? Cardano.NetworkIdKind.Testnet : Cardano.NetworkIdKind.Mainnet,  // TODO
-    );
+  const stakeAddressMainnet = (
+      Cardano.RewardAddress.new(
+          1,
+          Cardano.StakeCredential.from_keyhash(stakeKeyPub.hash())
+      ).to_address()
+  ).to_bech32();
 
-    let tags: string[] = [];
-    if (i === 0) {
-      tags = [GLOBAL_TAG]
-    }
-    if (externalPubAddressM && externalPubAddressM.length) {
-      externalPubAddress.push({
-        index: i,
-        network: TESTNET_NETWORK_INDEX,
-        reference: '',
-        tags,
-        address: externalPubAddressM,
-        chain: 0
-      });
-    }
-  }
-  const internalPubAddress = [];
-  for (let i = 0; i < TOTAL_ADDRESS_INDEX; i++) {
-    // eslint-disable-next-line no-await-in-loop
-    const internalPubAddressM = await generatePayAddress(
-      accountKey,
-      1,
-      i,
-      ["preprod", "preview", "testnet"].includes("testnet") ? Cardano.NetworkIdKind.Testnet : Cardano.NetworkIdKind.Mainnet, // TODO
-    );
+  const mainnetAddresses = await generateAddresses(accountKey, 1, TOTAL_ADDRESS_INDEX);
+  const testnetAddresses = await generateAddresses(accountKey, 0, TOTAL_ADDRESS_INDEX);
 
-    let tags = [];
-    if (i === 0) {
-      tags = ['Global']
-    }
-    // @ts-ignore
-    if (internalPubAddressM && internalPubAddressM.length) {
-      internalPubAddress.push({
-        index: i,
-        network: TESTNET_NETWORK_INDEX,
-        reference: '',
-        tags: [],
-        address: internalPubAddressM,
-        chain: 1
-      });
-    }
-  }
-
-  return {
-    id: undefined,
-    name,
+  let account: { [network: string]: any } = {};
+  const testnetAccount = {
     encryptedPrivateKey,
     balance: '0',
     utxos: [],
@@ -122,10 +87,10 @@ export const createAccount = async (
     history: [],
     pendingTxs: [],
     publicKeyHex,
-    stakeAddress,
-    selectedAddress: externalPubAddress[0],
-    internalPubAddress,
-    externalPubAddress,
+    stakeAddress: stakeAddressTestnet,
+    selectedAddress: testnetAddresses.externalPubAddresses[0],
+    internalPubAddress: testnetAddresses.internalPubAddresses,
+    externalPubAddress: testnetAddresses.externalPubAddresses,
     delegated: false,
     activeEpoch: 0,
     poolId: '',
@@ -133,7 +98,34 @@ export const createAccount = async (
     withdrawableAmount: 0,
     mode: 'Full'
   };
-};
+  account["preprod"] = testnetAccount;
+  account["preview"] = testnetAccount;
+  account["mainnet"] = {
+    encryptedPrivateKey,
+    balance: '0',
+    utxos: [],
+    assets: {},
+    history: [],
+    pendingTxs: [],
+    publicKeyHex,
+    stakeAddress: stakeAddressMainnet,
+    selectedAddress: mainnetAddresses.externalPubAddresses[0],
+    internalPubAddress: mainnetAddresses.internalPubAddresses,
+    externalPubAddress: mainnetAddresses.externalPubAddresses,
+    delegated: false,
+    activeEpoch: 0,
+    poolId: '',
+    rewardsSum: 0,
+    withdrawableAmount: 0,
+    mode: 'Full'
+  };
+
+  account = {...account, name, id: undefined}
+  console.log("\n\n\naccount created");
+  console.log(account);
+
+  return account;
+}
 
 export const generateWalletRootKey = async (mnemonic: string) => {
 
@@ -163,6 +155,60 @@ export const deriveAccountKey = (
   return (
     key.derive(harden(DERIVE_PUROPOSE)).derive(harden(DERIVE_COIN_TYPE))
   ).derive(harden(index));
+}
+
+
+export const generateAddresses = async (
+    accountKey: any,
+    networkId: number,
+    totalAddresses: number,
+) => {
+  const externalPubAddresses = [];
+  for (let i = 0; i < totalAddresses; i++) {
+    const externalPubAddress = await generatePayAddress(
+        accountKey,
+        0,
+        i,
+        networkId
+    );
+
+    if (externalPubAddress && externalPubAddress.length) {
+      externalPubAddresses.push({
+        index: i,
+        network: networkId,
+        reference: '',
+        tags: [],
+        address: externalPubAddress,
+        chain: 0
+      });
+    }
+  }
+
+  const internalPubAddresses = [];
+  for (let i = 0; i < totalAddresses; i++) {
+    const internalPubAddress = await generatePayAddress(
+        accountKey,
+        1,
+        i,
+        networkId
+    );
+
+    if (internalPubAddress && internalPubAddress.length) {
+      internalPubAddresses.push({
+        index: i,
+        network: networkId,
+        reference: '',
+        tags: [],
+        address: internalPubAddress,
+        chain: 1
+      });
+    }
+  }
+
+  return {
+    externalPubAddresses,
+    internalPubAddresses
+  }
 }
 
 export const generatePayAddress = async (

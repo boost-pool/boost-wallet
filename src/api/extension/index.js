@@ -1,6 +1,13 @@
 import {POPUP_WINDOW, STORAGE} from "../background/config";
-import {addOriginToWhitelist, getAccountFromDb, getWhitelistInDb, removeOriginFromWhitelist} from "../../db";
+import {
+    addOriginToWhitelist,
+    getAccountFromDb,
+    getNetworkFromDb,
+    getWhitelistInDb,
+    removeOriginFromWhitelist
+} from "../../db";
 import {EmurgoModule} from "../../lib/emurgo";
+import {setAccount} from "../../store/actions";
 
 export const getStorage = (key) => {}
 export const setStorage = (item) => {}
@@ -105,8 +112,10 @@ export const getAddress = async () => {
 export const getRewardAddress = async () => {
     const Cardano = await EmurgoModule.CardanoWasm();
     const currentAccount = await getAccountFromDb();
+    const network = await getNetworkFromDb()
+    const account = currentAccount[network.net]
     return Buffer.from(
-        Cardano.Address.from_bech32(currentAccount.stakeAddress).to_bytes(),
+        Cardano.Address.from_bech32(account.stakeAddress).to_bytes(),
         'hex'
     ).toString('hex');
 };
