@@ -6,6 +6,8 @@ import { Browser } from '@capacitor/browser';
 import Toast from '../components/Toast';
 // @ts-ignore
 import boostLogo from '../resources/img/adabooster-logo.jpeg';
+import {handlePath} from "../components/routing";
+import {ROUTES} from "../App";
 // @ts-ignore
 export default function Rooms(props) {
 
@@ -87,7 +89,9 @@ export default function Rooms(props) {
                         <h3 className="text-xs font-semibold uppercase text-gray-400 mb-1">Rooms</h3>
 
                         <div className="divide-y divide-gray-200">
-                           <button className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
+                           <button
+                               onClick={() => handlePath(ROUTES.CHAT, {data: "Marie Zulfikar"})}
+                               className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
                               <div className="flex items-center">
                                  <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://res.cloudinary.com/dc6deairt/image/upload/v1638102932/user-32-01_pfck4u.jpg" width="32" height="32" alt="Marie Zulfikar" />
                                  <div>

@@ -11,6 +11,7 @@ const Store = new PullStateStore({
   account: {},
   router: {
     currentPath: '/',
+    payload: undefined,
     history: []
   },
   settings:{

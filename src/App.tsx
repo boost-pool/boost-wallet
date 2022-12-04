@@ -21,6 +21,7 @@ export const ROUTES = {
     MAIN: '/',
     NETWORK: "network",
     P2P: "p2p",
+    CHAT: "chat",
     SETTINGS: "settings"
 }
 
@@ -70,6 +71,8 @@ const MainRoutes = () => {
                 return <Network />
             case ROUTES.P2P:
                 return <Rooms />
+            case ROUTES.CHAT:
+                return <P2PChat />
             case ROUTES.SETTINGS:
                 return <Settings />
             default:
