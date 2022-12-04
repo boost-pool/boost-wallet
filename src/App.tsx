@@ -15,6 +15,7 @@ import Network from "./pages/Network";
 import {getRouter} from "./store/selectors";
 import Store from './store';
 import Enable from "./popup/components/Enable";
+import Rooms from "./pages/Rooms";
 
 export const ROUTES = {
     MAIN: '/',
@@ -68,7 +69,7 @@ const MainRoutes = () => {
             case ROUTES.NETWORK:
                 return <Network />
             case ROUTES.P2P:
-                return <P2PChat />
+                return <Rooms />
             case ROUTES.SETTINGS:
                 return <Settings />
             default:
