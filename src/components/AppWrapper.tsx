@@ -54,11 +54,7 @@ const AppWrapper = (props) => {
 
     let settings = await getSettingsFromDb();
     const account = await getAccountFromDb();
-    console.log("initApp");
-    console.log("account");
-    console.log(account);
-    console.log("settings");
-    console.log(settings);
+
     setLanguage(settings.language);
     setSettings(settings);
 
