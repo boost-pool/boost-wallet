@@ -32,7 +32,6 @@ Note: you will need a free Blockfrost Token ID or [Dandelion](https://blockfrost
 Build and export for all platforms:
 ```bash
     # Install
-    nvm use 18
     npm i 
     # or
     npm i  --legacy-peer-dep
