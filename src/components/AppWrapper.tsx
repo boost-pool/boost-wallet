@@ -55,12 +55,14 @@ const AppWrapper = (props) => {
     let settings = await getSettingsFromDb();
     const account = await getAccountFromDb();
     console.log("initApp");
+    console.log("account");
     console.log(account);
+    console.log("settings");
+    console.log(settings);
     setLanguage(settings.language);
+    setSettings(settings);
 
     setAccount({...account[settings.network.net], id: account.id,  name: account.name});
-
-    setSettings(settings);
   }
 
   useEffect(() => {

@@ -15,15 +15,17 @@ export const getAccountsFromDb = async () => {
 }
 export const getAccountFromDb = async (name?:string) => {
 
+  const accounts = await get("accounts") || [];
+  if (accounts && Object.keys(accounts).length && !name){
+    return accounts[Object.keys(accounts)[0]]
+  }
   let settings = await getSettingsFromDb();
   let currentName = name ? name : settings && settings.currentAccount;
 
-  const accounts = await get("accounts") || [];
   if (accounts){
     // @ts-ignore
     return accounts[currentName];
   }
-  return {}
 }
 export const removeAccountFromDb = async (name:string) => {
   let accounts = await get("accounts");

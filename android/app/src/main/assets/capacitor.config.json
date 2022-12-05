@@ -12,9 +12,5 @@
 			"iconColor": "#488AFF",
 			"sound": "beep.wav"
 		}
-	},
-	"server": {
-		"url": "http://192.168.0.15:3001",
-		"cleartext": true
 	}
 }

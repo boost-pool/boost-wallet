@@ -280,6 +280,8 @@ export default function Home(props) {
             }
 
             let acc = await getAccountFromDb();
+            console.log("acc");
+            console.log(acc);
             acc[settings.network.net] = currentAccount;
             setAccount(currentAccount);
             await updateAccountByNetworkInDb(settings.network.net, currentAccount);

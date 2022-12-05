@@ -114,6 +114,10 @@ export const getRewardAddress = async () => {
     const currentAccount = await getAccountFromDb();
     const network = await getNetworkFromDb()
     const account = currentAccount[network.net]
+    console.log("currentAccount");
+    console.log(currentAccount);
+    console.log(network.net);
+    console.log(account);
     return Buffer.from(
         Cardano.Address.from_bech32(account.stakeAddress).to_bytes(),
         'hex'
