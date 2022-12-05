@@ -8,7 +8,14 @@ import {setAccount, setSettings} from '../store/actions';
 import {App} from '@capacitor/app';
 import {get, removeObject, set} from '../db/storage';
 
-import {getAccountFromDb, getNetworkFromDb, getSettingsFromDb, setAccountInDb, setCurrentAccountInDb} from '../db';
+import {
+  getAccountFromDb,
+  getNetworkFromDb,
+  getSettingsFromDb,
+  removeAccountFromDb,
+  setAccountInDb,
+  setCurrentAccountInDb
+} from '../db';
 
 import BigNumber from 'bignumber.js';
 import {addressSlice} from '../utils/utils';
@@ -88,30 +95,31 @@ const Accounts = ({}) => {
 
   const handleRemoveAccount = async (name:string) => {
     let accss = await get("accounts");
-
-    if (!accss || accss.length <= 1){
+    if (!accss || Object.keys(accss).length <= 1){
       await set("accounts", []);
-      await setCurrentAccountInDb("");
+      // @ts-ignore
+      await setCurrentAccountInDb(undefined);
+      setAccounts([]);
+      setAccount({});
+      return;
     } else {
-      await removeObject("accounts", name);
-      accss = await get("accounts");
+      await removeAccountFromDb(name);
 
       let settings = await getSettingsFromDb();
+      const acc = await getAccountFromDb();
       if (settings.currentAccount === name){
-        settings.currentAccount = accss && accss.length && accss[0].name;
-        await setCurrentAccountInDb(settings.currentAccount);
+        settings.currentAccount = acc.name;
+        await setCurrentAccountInDb(acc.name);
         setSettings(settings);
+        if (acc){
+          setAccount({...acc[settings.network.net], name: acc.name, id: acc.id});
+        } else {
+          setAccount({})
+        }
       }
+      const accs = await get("accounts") || [];
+      setAccounts(accs);
     }
-
-
-    const account = await getAccountFromDb();
-    const network = await getNetworkFromDb();
-
-    setAccount(account[network.net]);
-
-    const accs = await get("accounts") || [];
-    setAccounts(accs);
   }
 
   const onConfirm = async () => {

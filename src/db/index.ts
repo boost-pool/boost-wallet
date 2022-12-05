@@ -29,7 +29,11 @@ export const getAccountFromDb = async (name?:string) => {
 }
 export const removeAccountFromDb = async (name:string) => {
   let accounts = await get("accounts");
-  await set("accounts", accounts.filter((acc: { name: string; }) => acc.name !== name));
+  if (accounts[name] !== undefined){
+    delete accounts[name];
+    await set("accounts", accounts);
+  }
+
 }
 
 export const getSettingsFromDb = async () => {
@@ -39,9 +43,9 @@ export const getSettingsFromDb = async () => {
   if (settings){
     return settings;
   } else {
-    return {
+    const defaultSettings = {
       language: "English",
-      currentAccount: 0,
+      currentAccount: undefined,
       enableNotifications: false,
       darkTheme: false,
       network: {
@@ -52,7 +56,9 @@ export const getSettingsFromDb = async () => {
         net: "preprod",
         submit: SUBMIT_DEFAULT_URL
       }
-    }
+    };
+    await set("settings", defaultSettings);
+    return defaultSettings;
   }
 }
 

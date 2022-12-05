@@ -4,7 +4,14 @@ import { App } from '@capacitor/app';
 import React, { useEffect, useRef } from 'react';
 import CardanoModule from "../lib/CardanoModule";
 import {createStore, set} from "../db/storage";
-import {DB_NAME, getAccountFromDb, getSettingsFromDb, setExternalInDb, setSettingsInDb} from "../db";
+import {
+  DB_NAME,
+  getAccountFromDb,
+  getSettingsFromDb,
+  setCurrentAccountInDb,
+  setExternalInDb,
+  setSettingsInDb
+} from "../db";
 import {setAccount, setLanguage, setSettings} from "../store/actions";
 import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
@@ -53,10 +60,15 @@ const AppWrapper = (props) => {
     await createStore(DB_NAME);
 
     let settings = await getSettingsFromDb();
-    const account = await getAccountFromDb();
 
+    // Redux
     setLanguage(settings.language);
     setSettings(settings);
+
+    const account = await getAccountFromDb(settings.currentAccount);
+
+    if (!account) return;
+    if (!settings.currentAccount) await setCurrentAccountInDb(account.name);
 
     setAccount({...account[settings.network.net], id: account.id,  name: account.name});
   }
