@@ -2,9 +2,6 @@ import React, { FC, Fragment, useState } from 'react';
 import Toast from "../components/Toast";
 
 // @ts-ignore
-import Jdenticon from 'react-jdenticon';
-
-// @ts-ignore
 import { setAccount, setSettings } from '../../store/actions';
 import {writeToClipboard} from "../utils/clipboard";
 import {Browser} from "@capacitor/browser";

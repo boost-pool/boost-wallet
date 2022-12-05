@@ -31,8 +31,19 @@ Note: you will need a free Blockfrost Token ID or [Dandelion](https://blockfrost
 
 Build and export for all platforms:
 ```bash
+    # Install
     nvm use 18
+    npm i 
+    # or
+    npm i  --legacy-peer-dep
+     
+    # Run
+    npm run dev
+    # or
     yarn dev
+    
+    # For macos m1
+    npm -g i sharp
 ```
 
 All the client side files will be sent to the `./build/` directory. These files need to be copied to the native iOS and Android projects, and this is where Capacitor comes in:

@@ -2,7 +2,6 @@ import Store from '../store';
 import {getAccount, getSettings} from '../store/selectors';
 import React, {useEffect, useRef, useState} from 'react';
 // @ts-ignore
-import Jdenticon from 'react-jdenticon';
 import {createAccount, generateMnemonicSeed, validateMnemonic} from '../lib/account';
 import {setAccount, setSettings} from '../store/actions';
 import {App} from '@capacitor/app';
@@ -206,7 +205,7 @@ const Accounts = ({}) => {
 
                         <button className="bg-transparent hover focus:outline-none">
                             {/* @ts-ignore*/}
-                            <Jdenticon size="20" value={accounts[key].name} />
+                            IMG
                           </button>
                         {/* @ts-ignore*/}
                         {accounts[key].name}
@@ -249,7 +248,7 @@ const Accounts = ({}) => {
                   <thead>
                   <tr className="mt-12">
                     <td>
-                      <Jdenticon size="28" value={defaultJdenticon} />
+                      IMG
                     </td>
                     <td className="mb-12 text-2xl pl-2">
                       <input
