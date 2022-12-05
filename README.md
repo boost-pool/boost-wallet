@@ -41,8 +41,6 @@ Build and export for all platforms:
     # or
     yarn dev
     
-    # For macos m1
-    npm -g i sharp
 ```
 
 All the client side files will be sent to the `./build/` directory. These files need to be copied to the native iOS and Android projects, and this is where Capacitor comes in:
