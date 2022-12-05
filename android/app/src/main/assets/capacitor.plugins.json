@@ -20,10 +20,6 @@
 		"classpath": "com.capacitorjs.plugins.clipboard.ClipboardPlugin"
 	},
 	{
-		"pkg": "@capacitor/geolocation",
-		"classpath": "com.capacitorjs.plugins.geolocation.GeolocationPlugin"
-	},
-	{
 		"pkg": "@capacitor/local-notifications",
 		"classpath": "com.capacitorjs.plugins.localnotifications.LocalNotificationsPlugin"
 	},
