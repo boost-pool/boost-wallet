@@ -36,6 +36,7 @@ import txSendIcon from "../resources/img/txSend.png";
 import txReceiveIcon from "../resources/img/txReceive.png";
 import { useTranslation } from "react-i18next";
 import {getAccountFromDb, updateAccountByNetworkInDb, setAccountInDb, setNetworkInDb} from "../db";
+import Meerkat from "../meerkat/meerkat";
 
 
 const icon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,6 +48,13 @@ const icon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" view
 export default function Home(props) {
 
    const { t } = useTranslation();
+
+   console.log("try1");
+   const meerkat = new Meerkat();
+
+   console.log("meerkat");
+   console.log(meerkat);
+
 
    const [price, setPrice] = useState({
       usd: 0,

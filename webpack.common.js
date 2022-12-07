@@ -54,9 +54,15 @@ const config = {
          crypto: require.resolve('crypto-browserify'),
          stream: require.resolve('stream-browserify'),
          buffer: require.resolve('buffer/'),
+         path: require.resolve("path-browserify"),
+         https: require.resolve("https-browserify"),
+         http: require.resolve("stream-http")
       }
    },
    plugins: [
+      new webpack.DefinePlugin({
+         process: {env: {}}
+      }),
       new webpack.ProgressPlugin(),
       new CleanWebpackPlugin({
          verbose: true,
