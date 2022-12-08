@@ -11,6 +11,9 @@ import {ROUTES} from "../App";
 // @ts-ignore
 export default function Rooms(props) {
 
+   const [roomId, setRoomId] = useState('');
+   const [rooms, setRooms] = useState([]);
+
    useEffect(() => {
 
    }, []);
@@ -24,6 +27,13 @@ export default function Rooms(props) {
 
    const openCapacitorSite = async (site:string) => {
       await Browser.open({ url: site });
+   };
+
+   const handleCreateOrJoinRoom = async (roomId:string) => {
+
+      if (roomId && roomId.length){
+
+      }
    };
 
    const renderRoomsList = () => (
@@ -57,7 +67,7 @@ export default function Rooms(props) {
                                  </span>
                               </button>
                               <div
-                                  className="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col max-w-full bg-white invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-gray-700 left-0 right-0 border-none h-1/3 max-h-full"
+                                  className="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col max-w-full bg-white invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-gray-700 left-0 right-0 border-none h-3/4 max-h-full"
                                   id="newRoomBottom" aria-labelledby="newRoomBottomLabel">
                                  <div className="offcanvas-body flex-grow p-4 overflow-y-auto small">
                                     <button type="button"
@@ -65,6 +75,37 @@ export default function Rooms(props) {
                                             data-bs-dismiss="offcanvas" aria-label="Close"></button>
 
 
+                                    <div className="block">
+                                       <section className="text-gray-600 body-font">
+                                          <div className="container px-5 pt-8 mx-auto flex flex-wrap items-center">
+                                             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+                                                <h1 className="title-font font-medium text-3xl text-gray-900">
+                                                   P2P Chat Room
+                                                </h1>
+                                                <p className="leading-relaxed mt-4">Connect through WebRTC and WebTorrent trackers.</p>
+                                             </div>
+                                             <div
+                                                 className="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                                                <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Create or join a room</h2>
+                                                <div className="relative mb-4">
+                                                   <label htmlFor="email"
+                                                          className="leading-7 text-sm text-gray-600">Room Id</label>
+                                                   <input
+                                                       onChange={(e) => setRoomId(e.target.value)}
+                                                       type="text" id="roomId" name="roomId"
+                                                          className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleCreateOrJoinRoom(roomId)}
+                                                    className="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">
+                                                   Connect
+                                                </button>
+                                                <p className="text-xs text-gray-500 mt-3">
+                                                   About the Room ID ...</p>
+                                             </div>
+                                          </div>
+                                       </section>
+                                    </div>
                                  </div>
                               </div>
                            </div>

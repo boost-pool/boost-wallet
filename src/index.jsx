@@ -12,6 +12,7 @@ import './resources/style.css';
 import 'tw-elements';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './i18n';
+//import './serviceWorker';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -96,38 +97,6 @@ if (Capacitor.getPlatform() !== 'web') {
    // PushNotifications.createChannel(notificationChannel)
 }
 
-// Handle notification
-const handleNotifications = async () => {
-
-   // const channelList = { "channels": [{ "id": "default", "name": "Default", "description": "Default", "importance": 3, "visibility": -1000, "sound": "content://settings/system/notification_sound", "vibration": false, "lights": false, "lightColor": "#000000" }, { "id": "pop-notifications", "name": "Pop Notifications", "description": "Pop Notifications", "importance": 0, "visibility": -1000, "sound": "content://settings/system/notification_sound", "vibration": true, "lights": true, "lightColor": "#000000" }] }
-
-   let popNotif = false
-   if (Capacitor.getPlatform() !== 'web') {
-      const listChannel = await LocalNotifications.listChannels();
-      const channels = listChannel.channels
-      const print = channels.filter(channels => channels.id === 'pop-notifications');
-
-      if (JSON.stringify(print[0].importance) > 0) {
-         popNotif = true
-      }
-   } else {
-      popNotif = true
-   }
-
-   const permission = await LocalNotifications.checkPermissions();
-   if (popNotif && permission.display === 'granted') {
-      LocalNotifications.addListener('localNotificationReceived', (notification) => {
-         Toast.show({ text: 'You got a new notification!' });
-      })
-      LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
-         Toast.show({ text: `Notification: ${JSON.stringify(notification.notification.body)}` });
-      })
-   } else {
-      await LocalNotifications.requestPermissions();
-   }
-}
-handleNotifications();
-
 // Service worker
 if (process.env.NODE_ENV === 'production') {
    if ('serviceWorker' in navigator) {
@@ -140,3 +109,4 @@ if (process.env.NODE_ENV === 'production') {
       });
    }
 }
+

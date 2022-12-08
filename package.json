@@ -31,6 +31,7 @@
       "@dcspark/cardano-multiplatform-lib-browser": "^3.1.0",
       "@emurgo/cardano-serialization-lib-browser": "11.1.0",
       "@emurgo/cip14-js": "^3.0.1",
+      "@fabianbormann/meerkat": "^1.0.4",
       "@headlessui/react": "^1.7.4",
       "@ionic/pwa-elements": "^3.1.1",
       "@ionic/react": "^6.2.2",
