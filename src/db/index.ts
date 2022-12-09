@@ -13,6 +13,7 @@ export const initDb = async () => {
 export const getAccountsFromDb = async () => {
   return  await get("accounts");
 }
+
 export const getAccountFromDb = async (name?:string) => {
 
   const accounts = await get("accounts") || [];

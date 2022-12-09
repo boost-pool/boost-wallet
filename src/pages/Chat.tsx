@@ -49,7 +49,7 @@ export default function P2PChat() {
           </div>
           <section
               className="flex flex-col items-center justify-center w-screen min-h-screen text-gray-800">
-             <p className="text-xl shadow-xl">{router?.payload?.data}</p>
+             <p className="text-xl shadow-xl">{router?.payload?.data?.room?.name}</p>
              <div
                  //style={{ backgroundImage: `url(${roomSVG})` }}
                  className="flex flex-col flex-grow w-full bg-white shadow-xl rounded-lg overflow-hidden">

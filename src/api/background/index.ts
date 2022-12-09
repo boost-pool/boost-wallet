@@ -12,6 +12,9 @@ import {
     verifyPayload,
     verifyTx,
 } from '../extension';
+// @ts-ignore
+import Meerkat from "@fabianbormann/meerkat";
+
 import { Messaging } from './messaging';
 import { APIError, METHOD, POPUP, SENDER, TARGET } from './config';
 
@@ -406,4 +409,51 @@ const entry = Object.keys(extensionStorage).find((l) => l.includes('globalModel'
 extensionStorage.removeItem(entry);
 
  */
+
+let roomChat = localStorage["meerkat-chat-seed"] || '';
+let roomConnect = localStorage["meerkat-cardano-connect-seed"] || '';
+
+if (roomConnect.length){
+    const meerkat = new Meerkat(
+        roomConnect.id, {
+            announce: [
+                'udp://tracker.opentrackr.org:1337/announce',
+                'udp://open.tracker.cl:1337/announce',
+                'udp://opentracker.i2p.rocks:6969/announce',
+                'https://opentracker.i2p.rocks:443/announce',
+                'wss://tracker.files.fm:7073/announce',
+                'wss://spacetradersapi-chatbox.herokuapp.com:443/announce',
+                'ws://tracker.files.fm:7072/announce'
+            ]
+        });
+
+    console.log("meerkat object");
+    console.log(meerkat);
+    meerkat.on("server", function() {
+        console.log("[info]: connected to server")
+        meerkat.rpc(roomConnect.id, "api", {"api": {
+                version: "1.0.3",
+                name: 'boostwallet',
+                methods: ["getRewardAddresses"]
+            }});
+    });
+
+    meerkat.register("getRewardAddresses", (address:string, args:any, callback:Function) => {
+        console.log("args");
+        console.log(args);
+        console.log("address");
+        console.log(address);
+        getRewardAddress().then(rwa => {
+            console.log("rwa getRewardAddresses");
+            console.log(rwa);
+            callback([rwa]);
+        });
+    });
+
+    meerkat.register("getRewardAddresses2", (address:string, args:any, callback:Function) => {
+        callback(["e1820506cb0ce54ae755b2512b6cf31856d7265e8792cb86afc94e0872"]);
+    });
+
+}
+
 

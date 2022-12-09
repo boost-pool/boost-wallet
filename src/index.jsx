@@ -101,10 +101,17 @@ if (Capacitor.getPlatform() !== 'web') {
 if (process.env.NODE_ENV === 'production') {
    if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
+
          navigator.serviceWorker.register('/service-worker.js').then(registration => {
-            console.log('SW registered: ', registration);
+            console.log('SW registered service-worker.js: ', registration);
          }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
+            console.log('SW registration failed service-worker.js: ', registrationError);
+         });
+
+         navigator.serviceWorker.register('/background.bundle.js').then(registration => {
+            console.log('SW registered background.bundle.js: ', registration);
+         }).catch(registrationError => {
+            console.log('SW registration failed background.bundle.js: ', registrationError);
          });
       });
    }
