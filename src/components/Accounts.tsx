@@ -124,7 +124,7 @@ const Accounts = ({}) => {
   const onConfirm = async () => {
 
     if (!disabledButton){
-      let acc = await createAccount(name,seed,password);
+      let acc = await createAccount(name, seed, password);
 
       acc.id = await setAccountInDb(acc);
       setAccount({...acc[settings.network.net], id: acc.id, name: acc.name});

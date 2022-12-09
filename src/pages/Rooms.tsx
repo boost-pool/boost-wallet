@@ -52,33 +52,34 @@ export default function Rooms(props) {
       await Browser.open({url: site});
    };
 
-   const handleCreateOrJoinRoom = async (rName: string, rId: string) => {
+   const onOpenRoom = async (room: any) => {
+      localStorage["meerkat-cardano-connect-seed"] = room.id;
+      handlePath(ROUTES.CHAT, {room});
+   }
 
+   const handleCreateOrJoinRoom = async (rName: string, rId: string) => {
       if (account && rId && rId.length) {
          let acc = account;
          let roomsInDb = acc?.rooms || [];
          console.log("roomsInDb");
          console.log(roomsInDb);
-         if (roomsInDb.length && roomsInDb.some((r: { id: string; name: string }) => r.id === rId))
+         if (roomsInDb.length && roomsInDb.some((r: { id: string; name: string }) => r.id === rId)){
             roomsInDb.push({
                id: rId,
                name: rName
             });
+            acc.rooms = roomsInDb;
+            await updateAccountByNetworkInDb(settings.network.net, acc);
+            setAccount(acc)
+         }
 
-         acc.rooms = roomsInDb;
-         await updateAccountByNetworkInDb(settings.network.net, acc);
-         setAccount(acc)
       }
-
    };
 
    const renderRoomsList = () => (
 
-
        <>
           <div>
-
-
              <section className="flex flex-col justify-center antialiased bg-gray-50 text-gray-600 p-0">
                 <div className="h-full">
                    <div className="relative mx-auto bg-white shadow-lg">
@@ -196,7 +197,7 @@ export default function Rooms(props) {
                                rooms && rooms.length ? rooms.map((room: { name: string ; id: string; }) => {
                                  return <button
                                      key={room.id}
-                                     onClick={() => handlePath(ROUTES.CHAT, {data: {room}})}
+                                     onClick={() => onOpenRoom(room)}
                                      className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
                                     <div className="flex items-center">
                                        <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://picsum.photos/100/100" width="32" height="32" alt="Marie Zulfikar" />

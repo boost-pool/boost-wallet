@@ -93,6 +93,7 @@ export const createAccount = async (
   };
   account["preprod"] = testnetAccount;
   account["preview"] = testnetAccount;
+
   account["mainnet"] = {
     encryptedPrivateKey,
     balance: '0',

@@ -12,6 +12,7 @@ import '../resources/style.css';
 import 'tw-elements';
 import {I18nextProvider} from 'react-i18next';
 import i18n from '../i18n';
+//import '../serviceWorker';
 
 const root = ReactDOM.createRoot(document.getElementById('root-internal'));
 root.render(

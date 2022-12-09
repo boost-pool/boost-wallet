@@ -410,50 +410,58 @@ extensionStorage.removeItem(entry);
 
  */
 
-let roomChat = localStorage["meerkat-chat-seed"] || '';
-let roomConnect = localStorage["meerkat-cardano-connect-seed"] || '';
 
-if (roomConnect.length){
-    const meerkat = new Meerkat(
-        roomConnect.id, {
-            announce: [
-                'udp://tracker.opentrackr.org:1337/announce',
-                'udp://open.tracker.cl:1337/announce',
-                'udp://opentracker.i2p.rocks:6969/announce',
-                'https://opentracker.i2p.rocks:443/announce',
-                'wss://tracker.files.fm:7073/announce',
-                'wss://spacetradersapi-chatbox.herokuapp.com:443/announce',
-                'ws://tracker.files.fm:7072/announce'
-            ]
-        });
+const updated_rooms = [];
+try{
+    let rooms = localStorage["cardano-p2p-connect-rooms"] || [];
 
-    console.log("meerkat object");
-    console.log(meerkat);
-    meerkat.on("server", function() {
-        console.log("[info]: connected to server")
-        meerkat.rpc(roomConnect.id, "api", {"api": {
-                version: "1.0.3",
-                name: 'boostwallet',
-                methods: ["getRewardAddresses"]
-            }});
-    });
+    if (rooms.length){
 
-    meerkat.register("getRewardAddresses", (address:string, args:any, callback:Function) => {
-        console.log("args");
-        console.log(args);
-        console.log("address");
-        console.log(address);
-        getRewardAddress().then(rwa => {
-            console.log("rwa getRewardAddresses");
-            console.log(rwa);
-            callback([rwa]);
-        });
-    });
+        rooms.map((room: { id: string; }) => {
+            const meerkat = new Meerkat(
+                {
+                    identifier: room.id,
+                    announce: [
+                        'udp://tracker.opentrackr.org:1337/announce',
+                        'udp://open.tracker.cl:1337/announce',
+                        'udp://opentracker.i2p.rocks:6969/announce',
+                        'https://opentracker.i2p.rocks:443/announce',
+                        'wss://tracker.files.fm:7073/announce',
+                        'ws://tracker.files.fm:7072/announce'
+                    ],
+                    seed: room.id
+                });
 
-    meerkat.register("getRewardAddresses2", (address:string, args:any, callback:Function) => {
-        callback(["e1820506cb0ce54ae755b2512b6cf31856d7265e8792cb86afc94e0872"]);
-    });
+            console.log("meerkat object");
+            console.log(meerkat);
+            meerkat.on("server", function() {
+                console.log("[info]: connected to server")
 
+                meerkat.rpc(room.id, "api", {"api": {
+                        version: "1.0.3",
+                        name: 'boostwallet',
+                        methods: ["getRewardAddresses"]
+                    }}, () => {});
+            });
+
+            meerkat.register("getRewardAddresses", (address:string, args:any, callback:Function) => {
+                console.log("args");
+                console.log(args);
+                console.log("address");
+                console.log(address);
+                getRewardAddress().then(rwa => {
+                    console.log("rwa getRewardAddresses");
+                    console.log(rwa);
+                    callback([rwa]);
+                });
+            });
+        })
+    }
+
+} catch (e) {
+    console.log("Error on load rooms");
+    console.log(e);
 }
+
 
 
