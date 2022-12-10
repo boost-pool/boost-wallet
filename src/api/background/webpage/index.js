@@ -50,7 +50,7 @@ export const getAddress = async () => {
 
 export const getRewardAddress = async () => {
   console.log("getRewardAddress in injected Messaging")
-  console.log("METHOD.getRewardAddress");
+  console.log("METHOD.getRewardAddress1");
   console.log(METHOD.getRewardAddress);
 
   //const result = "stake_test1uqald738wpra0dsnw9d672uu25qgtjvxmqzv90un97epwfse720ee";

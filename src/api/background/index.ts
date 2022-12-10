@@ -390,6 +390,63 @@ app.add(METHOD.signTx, async (request, sendResponse) => {
         });
     }
 });
+app.add("getRewardAddress2", async (request, sendResponse) => {
+    return "hello"
+});
+
+/*
+app.add(METHOD.initP2P, async (request, sendResponse) => {
+    console.log("METHOD.initP2P")
+
+    console.log(request);
+    try {
+        // @ts-ignore
+        //const response = openP2PConnections();
+
+        const response = "example";
+        console.log("response");
+        console.log(response);
+
+        if (response) {
+            sendResponse({
+                // @ts-ignore
+                id: request.id,
+                data: response,
+                target: TARGET,
+                sender: SENDER.extension,
+            });
+        } else { // @ts-ignore
+            if (response.error) {
+                // @ts-ignore
+                sendResponse({
+                    // @ts-ignore
+                    id: request.id,
+                    // @ts-ignore
+                    error: response.error,
+                    target: TARGET,
+                    sender: SENDER.extension,
+                });
+            } else {
+                sendResponse({
+                    // @ts-ignore
+                    id: request.id,
+                    error: APIError.InternalError,
+                    target: TARGET,
+                    sender: SENDER.extension,
+                });
+            }
+        }
+    } catch (e) {
+        sendResponse({
+            // @ts-ignore
+            id: request.id,
+            error: e,
+            target: TARGET,
+            sender: SENDER.extension,
+        });
+    }
+});
+*/
 
 app.listen();
 
@@ -409,59 +466,6 @@ const entry = Object.keys(extensionStorage).find((l) => l.includes('globalModel'
 extensionStorage.removeItem(entry);
 
  */
-
-
-const updated_rooms = [];
-try{
-    let rooms = localStorage["cardano-p2p-connect-rooms"] || [];
-
-    if (rooms.length){
-
-        rooms.map((room: { id: string; }) => {
-            const meerkat = new Meerkat(
-                {
-                    identifier: room.id,
-                    announce: [
-                        'udp://tracker.opentrackr.org:1337/announce',
-                        'udp://open.tracker.cl:1337/announce',
-                        'udp://opentracker.i2p.rocks:6969/announce',
-                        'https://opentracker.i2p.rocks:443/announce',
-                        'wss://tracker.files.fm:7073/announce',
-                        'ws://tracker.files.fm:7072/announce'
-                    ],
-                    seed: room.id
-                });
-
-            console.log("meerkat object");
-            console.log(meerkat);
-            meerkat.on("server", function() {
-                console.log("[info]: connected to server")
-
-                meerkat.rpc(room.id, "api", {"api": {
-                        version: "1.0.3",
-                        name: 'boostwallet',
-                        methods: ["getRewardAddresses"]
-                    }}, () => {});
-            });
-
-            meerkat.register("getRewardAddresses", (address:string, args:any, callback:Function) => {
-                console.log("args");
-                console.log(args);
-                console.log("address");
-                console.log(address);
-                getRewardAddress().then(rwa => {
-                    console.log("rwa getRewardAddresses");
-                    console.log(rwa);
-                    callback([rwa]);
-                });
-            });
-        })
-    }
-
-} catch (e) {
-    console.log("Error on load rooms");
-    console.log(e);
-}
 
 
 

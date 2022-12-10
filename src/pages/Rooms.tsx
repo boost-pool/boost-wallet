@@ -53,26 +53,35 @@ export default function Rooms(props) {
    };
 
    const onOpenRoom = async (room: any) => {
-      localStorage["meerkat-cardano-connect-seed"] = room.id;
+
       handlePath(ROUTES.CHAT, {room});
    }
 
    const handleCreateOrJoinRoom = async (rName: string, rId: string) => {
-      if (account && rId && rId.length) {
+      if (account && account.name && rId && rId.length) {
+
          let acc = account;
          let roomsInDb = acc?.rooms || [];
          console.log("roomsInDb");
          console.log(roomsInDb);
-         if (roomsInDb.length && roomsInDb.some((r: { id: string; name: string }) => r.id === rId)){
-            roomsInDb.push({
+         if (!roomsInDb.some((r: { id: string; name: string }) => r.id === rId)){
+            console.log("update account");
+            roomsInDb = [...roomsInDb,{
                id: rId,
                name: rName
-            });
-            acc.rooms = roomsInDb;
+            }]
+            acc = {...acc, rooms: roomsInDb};
             await updateAccountByNetworkInDb(settings.network.net, acc);
-            setAccount(acc)
+            setRooms(roomsInDb);
+            setAccount(acc);
          }
 
+         const currentRoomsJSON = localStorage["cardano-p2p-connect-list"] || "[]";
+
+         let currentRooms:any[] = JSON.parse(currentRoomsJSON);
+         currentRooms.push(rId);
+         currentRooms = Array.from(new Set(currentRooms));
+         localStorage["cardano-p2p-connect-list"] = JSON.stringify(currentRooms);
       }
    };
 
@@ -87,7 +96,7 @@ export default function Rooms(props) {
                          <div className="flex justify-between items-center mb-3">
                             <div className="flex items-center">
                                <a className="inline-flex items-start p-2 mr-3 bg-blue-200 rounded-full" href="#0">
-                                  {account?.name[0]}
+                                  {account?.name && account.name.length && account.name[0]}
                                </a>
                                <div className="pr-1">
                                   <a className="inline-flex text-gray-800 hover:text-gray-900" href="#0">
@@ -96,7 +105,7 @@ export default function Rooms(props) {
                                   <a
                                       onClick={() => onCopy(account?.stakeAddress)}
                                       className="block text-sm font-medium hover:text-indigo-500 cursor-pointer"
-                                     >{addressSlice(account?.stakeAddress || '', 14)}</a>
+                                  >{addressSlice(account?.stakeAddress || '', 14)}</a>
                                </div>
                             </div>
                             <div className="relative inline-flex flex-shrink-0">
@@ -195,38 +204,38 @@ export default function Rooms(props) {
                          <div className="divide-y divide-gray-200">
                             {
                                rooms && rooms.length ? rooms.map((room: { name: string ; id: string; }) => {
-                                 return <button
-                                     key={room.id}
-                                     onClick={() => onOpenRoom(room)}
-                                     className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
-                                    <div className="flex items-center">
-                                       <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://picsum.photos/100/100" width="32" height="32" alt="Marie Zulfikar" />
-                                       <div>
-                                          <h4 className="text-sm font-semibold text-gray-900">{room.name}</h4>
-                                          <div className="text-[13px]">{room.id} · 2hrs</div>
-                                       </div>
-                                    </div>
-                                 </button>
-                              }) : null
-                           }
-                        </div>
-                     </div>
+                                  return <button
+                                      key={room.id}
+                                      onClick={() => onOpenRoom(room)}
+                                      className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
+                                     <div className="flex items-center">
+                                        <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://picsum.photos/100/100" width="32" height="32" alt="Marie Zulfikar" />
+                                        <div>
+                                           <h4 className="text-sm font-semibold text-gray-900">{room.name}</h4>
+                                           <div className="text-[13px]">{room.id} · 2hrs</div>
+                                        </div>
+                                     </div>
+                                  </button>
+                               }) : null
+                            }
+                         </div>
+                      </div>
 
 
-                  </div>
-               </div>
-            </section>
-         </div>
+                   </div>
+                </div>
+             </section>
+          </div>
        </>
    );
 
 
    return (
-      <>
+       <>
 
-         {renderRoomsList()}
+          {renderRoomsList()}
 
-      </>
+       </>
    )
 
 }

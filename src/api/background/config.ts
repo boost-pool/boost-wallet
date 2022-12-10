@@ -18,6 +18,7 @@ export const METHOD = {
     //internal
     requestData: 'requestData',
     returnData: 'returnData',
+    initP2P: 'initP2P',
 };
 
 /*

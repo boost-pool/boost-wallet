@@ -15,6 +15,7 @@ import {
 import {setAccount, setLanguage, setSettings} from "../store/actions";
 import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
+import {Messaging} from "../api/background/messaging";
 
 setupIonicReact({});
 
@@ -57,7 +58,16 @@ const AppWrapper = (props) => {
   }, []);
 
   const initApp = async () => {
+
     await createStore(DB_NAME);
+
+    console.log("AppWrapper init p2p")
+    // @ts-ignore
+    const resultP2p = await Messaging.sendToContent({
+      method: "getRewardAddress"
+    });
+    console.log("getRewardAddress2332");
+    console.log(resultP2p)
 
     let settings = await getSettingsFromDb();
 

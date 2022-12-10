@@ -18,7 +18,37 @@ export const METHOD = {
   //internal
   requestData: 'requestData',
   returnData: 'returnData',
+  initP2P: 'initP2P',
 };
+
+/*
+
+localStorage = {
+  whitelisted: [string],
+  encryptedKey: encrypted string
+  accounts: {
+     [accountIndex]: {
+      index: accountIndex,
+      paymentKeyHash: cbor string,
+      stakeKeyHash cbor string,
+      name: string,
+      mainnet: {
+            lovelace: 0,
+            assets: [],
+            history: {},
+          },
+      testnet: {
+            lovelace: 0,
+            assets: [],
+            history: {},
+          },
+      avatar: Math.random().toString(),
+    },
+  },
+  currentAccount: accountIndex,
+  network: {id: "mainnet" | "testnet", node: "https://blockfrost..."}
+}
+*/
 
 export const STORAGE = {
   whitelisted: 'whitelisted',
@@ -36,23 +66,12 @@ export const LOCAL_STORAGE = {
 
 export const NODE = {
   mainnet: 'https://cardano-mainnet.blockfrost.io/api/v0',
-  testnet: 'https://cardano-testnet.blockfrost.io/api/v0',
-  preview: 'https://cardano-preview.blockfrost.io/api/v0',
-  preprod: 'https://cardano-preprod.blockfrost.io/api/v0',
+  testnet: 'https://cardano-preprod.blockfrost.io/api/v0/',
 };
 
 export const NETWORK_ID = {
   mainnet: 'mainnet',
   testnet: 'testnet',
-  preview: 'preview',
-  preprod: 'preprod',
-};
-
-export const NETWORKD_ID_NUMBER = {
-  mainnet: 1,
-  testnet: 0,
-  preview: 0,
-  preprod: 0,
 };
 
 export const POPUP = {

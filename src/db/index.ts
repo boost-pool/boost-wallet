@@ -185,7 +185,7 @@ export const addOriginToWhitelist = async (origin:string) => {
 
   let external = (await get("external")) || [];
 
-  if (external && !external.whitelist.includes(origin)){
+  if (external && external.whitelist && !external.whitelist.includes(origin)){
     external.whitelist = [...external.whitelist, origin];
     await set("external", external);
   }
