@@ -10,6 +10,8 @@ import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
 import {METHOD, SENDER, TARGET} from "../api/background/config";
 import {Messaging} from "../api/background/messaging";
+import {BackgroundTasks} from "../api/background/mobile/backgroundTask";
+import {Capacitor} from "@capacitor/core";
 setupIonicReact({});
 
 window.matchMedia("(prefers-color-scheme: dark)").addListener(async (status) => {
@@ -79,15 +81,35 @@ const AppWrapper = (props) => {
     console.log(whitelisted)
      */
 
-    console.log("loadP2p");
-    const loadP2p = await Messaging.sendToBackground({
-      method: METHOD.loadP2P,
-      origin: window.origin,
-    });
-    console.log(loadP2p);
+    console.log("Capacitor.getPlatform()");
+    console.log(Capacitor.getPlatform());
+    // ios or android
+    if (Capacitor.isNativePlatform()) {
+      console.log("you are in mobile device");
+      const bgT = new BackgroundTasks();
+      console.log("bgT");
+      bgT.onInit();
+      console.log(bgT);
+    } else if (Capacitor.getPlatform() !== 'web') {
+      console.log("you are in other device");
+
+
+    } else {
+      console.log("you are in web");
+      console.log("loadP2p");
+      const loadP2p = await Messaging.sendToBackground({
+        method: METHOD.loadP2P,
+        origin: window.origin,
+      });
+      console.log(loadP2p);
+
+    }
   }
 
   useEffect(() => {
+
+
+
     const fetchData = async () => {
 
       await CardanoModule.load();

@@ -1,4 +1,5 @@
 import { APIError, METHOD, SENDER, TARGET } from './config';
+import { Browser } from '@capacitor/browser';
 
 /**
  * Message Object
@@ -14,6 +15,8 @@ import { APIError, METHOD, SENDER, TARGET } from './config';
  * }
  */
 
+console.log("Browser");
+console.log(Browser);
 class InternalController {
   constructor() {
     this.port = chrome.runtime.connect({
