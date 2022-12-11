@@ -169,7 +169,7 @@ export const getExternalInDb = async () => {
     return external
   } else {
     return {
-      whitelist: []
+      whitelist: [window.origin]
     }
   }
 }

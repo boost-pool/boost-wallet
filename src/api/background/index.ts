@@ -14,6 +14,7 @@ import {
 } from '../extension';
 import { Messaging } from './messaging';
 import { APIError, METHOD, POPUP, SENDER, TARGET } from './config';
+import {set} from "../../db/storage";
 
 const app = Messaging.createBackgroundController();
 
@@ -381,6 +382,32 @@ app.add(METHOD.signTx, async (request, sendResponse) => {
         sendResponse({
             // @ts-ignore
             id: request.id,
+            error: e,
+            target: TARGET,
+            sender: SENDER.extension,
+        });
+    }
+});
+
+app.add(METHOD.loadP2P, async (request, sendResponse) => {
+    console.log("loadP2Pax");
+    console.log("request1");
+    console.log(request);
+
+    try {
+        console.log("try set");
+        await set("loadP2P", "key:loadP2P:0");
+        sendResponse({
+            // @ts-ignore
+            id: "request.id",
+            error: "testing2",
+            target: TARGET,
+            sender: SENDER.extension,
+        });
+    } catch (e) {
+        sendResponse({
+            // @ts-ignore
+            id: "request.id",
             error: e,
             target: TARGET,
             sender: SENDER.extension,

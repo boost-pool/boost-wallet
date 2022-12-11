@@ -9,7 +9,7 @@ import {setAccount, setLanguage, setSettings} from "../store/actions";
 import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
 import {METHOD, SENDER, TARGET} from "../api/background/config";
-
+import {Messaging} from "../api/background/messaging";
 setupIonicReact({});
 
 window.matchMedia("(prefers-color-scheme: dark)").addListener(async (status) => {
@@ -69,28 +69,22 @@ const AppWrapper = (props) => {
 
     console.log("AppWrapper init p2p12")
     // @ts-ignore
+
     /*
     const whitelisted = await Messaging.sendToBackground({
       method: METHOD.isWhitelisted,
       origin: window.origin,
     });
-    */
+    console.log("whitelisted")
+    console.log(whitelisted)
+     */
 
-    /*
-    const r = new Promise((res, rej) =>
-        chrome.runtime.sendMessage(
-            { method: METHOD.isWhitelisted, origin: window.origin, target: TARGET, sender: SENDER.webpage },
-            (response: unknown) => res(response)
-        )
-    );
-    */
-
-    console.log("rrrr")
-    //const r = await new Promise((res, rej) => "hello12");
-
-    //console.log("resultP2p");
-
-    //console.log(r)
+    console.log("loadP2p");
+    const loadP2p = await Messaging.sendToBackground({
+      method: METHOD.loadP2P,
+      origin: window.origin,
+    });
+    console.log(loadP2p);
   }
 
   useEffect(() => {
