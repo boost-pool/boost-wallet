@@ -33,13 +33,13 @@ export const setSettings = settings => {
   });
 };
 
-export const setCurrentPath = path => {
+export const setCurrentPath = ({path, payload}) => {
   Store.update(s => {
     s.router.history = [...s.router.history, s.router.currentPath];
     s.router.currentPath = path;
+    s.router.payload = payload;
   });
 };
-
 export const setLanguage = lang => {
   Store.update(s => {
     s.settings.language = lang;
