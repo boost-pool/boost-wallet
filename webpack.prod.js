@@ -2,7 +2,6 @@ const path = require("path");
 const Dotenv = require('dotenv-webpack');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 let { merge } = require("webpack-merge");
 
@@ -35,6 +34,7 @@ module.exports = merge(require("./webpack.common.js"), {
       new Dotenv({
          path: './.env.production', // load this now instead of the ones in '.env'
       }),
+       /*
       new WorkboxPlugin.GenerateSW({
          // these options encourage the ServiceWorkers to get in there fast
          // and not allow any straggling "old" SWs to hang around
@@ -42,14 +42,14 @@ module.exports = merge(require("./webpack.common.js"), {
          skipWaiting: true,
          maximumFileSizeToCacheInBytes: 5000000,
       }),
+       */
       new MiniCssExtractPlugin({
          filename: 'styles.[fullhash].min.css',
       }),
    ],
    optimization: {
       minimizer: [
-         new CssMinimizerPlugin(),
-         new UglifyJsPlugin()
+         new CssMinimizerPlugin()
       ],
       minimize: true,
    },

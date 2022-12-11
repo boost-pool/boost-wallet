@@ -13,21 +13,28 @@ export const initDb = async () => {
 export const getAccountsFromDb = async () => {
   return  await get("accounts");
 }
+
 export const getAccountFromDb = async (name?:string) => {
 
+  const accounts = await get("accounts") || [];
+  if (accounts && Object.keys(accounts).length && !name){
+    return accounts[Object.keys(accounts)[0]]
+  }
   let settings = await getSettingsFromDb();
   let currentName = name ? name : settings && settings.currentAccount;
 
-  const accounts = await get("accounts") || [];
   if (accounts){
     // @ts-ignore
     return accounts[currentName];
   }
-  return {}
 }
 export const removeAccountFromDb = async (name:string) => {
   let accounts = await get("accounts");
-  await set("accounts", accounts.filter((acc: { name: string; }) => acc.name !== name));
+  if (accounts[name] !== undefined){
+    delete accounts[name];
+    await set("accounts", accounts);
+  }
+
 }
 
 export const getSettingsFromDb = async () => {
@@ -37,9 +44,9 @@ export const getSettingsFromDb = async () => {
   if (settings){
     return settings;
   } else {
-    return {
+    const defaultSettings = {
       language: "English",
-      currentAccount: 0,
+      currentAccount: undefined,
       enableNotifications: false,
       darkTheme: false,
       network: {
@@ -50,7 +57,9 @@ export const getSettingsFromDb = async () => {
         net: "preprod",
         submit: SUBMIT_DEFAULT_URL
       }
-    }
+    };
+    await set("settings", defaultSettings);
+    return defaultSettings;
   }
 }
 
@@ -151,14 +160,12 @@ export const setSubmitUrlInDb = async (submitUrl:string) => {
 }
 
 export const setExternalInDb = async (external:any) => {
-  if (external){
-    await set("external", external);
-  }
+  await set("external", external);
 }
 
 export const getExternalInDb = async () => {
-  const external = get("external");
-  if (external){
+  const external = await get("external");
+  if (external && external.whitelist){
     return external
   } else {
     return {
@@ -176,7 +183,7 @@ export const addOriginToWhitelist = async (origin:string) => {
 
   let external = (await get("external")) || [];
 
-  if (external && !external.whitelist.includes(origin)){
+  if (external && external.whitelist && !external.whitelist.includes(origin)){
     external.whitelist = [...external.whitelist, origin];
     await set("external", external);
   }

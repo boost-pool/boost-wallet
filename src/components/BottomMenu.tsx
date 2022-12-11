@@ -3,9 +3,6 @@ import { Dialog, Transition, Listbox } from '@headlessui/react';
 import { Share } from '@capacitor/share';
 
 // @ts-ignore
-import Jdenticon from 'react-jdenticon';
-
-// @ts-ignore
 import { setAccount, setSettings } from '../../store/actions';
 import * as selectors from '../store/selectors';
 import Store from '../store';

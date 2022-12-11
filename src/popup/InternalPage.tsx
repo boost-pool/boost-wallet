@@ -2,6 +2,7 @@ import "../utils/splide.min.jsx";
 import "../utils/index.jsx";
 import React, {useRef} from "react";
 import { useEffect } from "react";
+// @ts-ignore
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import {IonApp, IonContent, IonPage} from '@ionic/react';
 import AppWrapper from "../components/AppWrapper";

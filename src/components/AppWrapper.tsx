@@ -4,10 +4,11 @@ import { App } from '@capacitor/app';
 import React, { useEffect, useRef } from 'react';
 import CardanoModule from "../lib/CardanoModule";
 import {createStore, set} from "../db/storage";
-import {DB_NAME, getAccountFromDb, getSettingsFromDb, setExternalInDb, setSettingsInDb} from "../db";
+import {DB_NAME, getAccountFromDb, getExternalInDb, getSettingsFromDb, setExternalInDb, setSettingsInDb} from "../db";
 import {setAccount, setLanguage, setSettings} from "../store/actions";
 import {SUPPORTED_LANGUAGES} from "../pages/Settings";
 import {useTranslation} from "react-i18next";
+import {METHOD, SENDER, TARGET} from "../api/background/config";
 
 setupIonicReact({});
 
@@ -61,6 +62,35 @@ const AppWrapper = (props) => {
     setAccount({...account[settings.network.net], id: account.id,  name: account.name});
 
     setSettings(settings);
+    let external = await getExternalInDb();
+    console.log("external");
+    console.log(external);
+    await setExternalInDb(external);
+
+    console.log("AppWrapper init p2p12")
+    // @ts-ignore
+    /*
+    const whitelisted = await Messaging.sendToBackground({
+      method: METHOD.isWhitelisted,
+      origin: window.origin,
+    });
+    */
+
+    /*
+    const r = new Promise((res, rej) =>
+        chrome.runtime.sendMessage(
+            { method: METHOD.isWhitelisted, origin: window.origin, target: TARGET, sender: SENDER.webpage },
+            (response: unknown) => res(response)
+        )
+    );
+    */
+
+    console.log("rrrr")
+    //const r = await new Promise((res, rej) => "hello12");
+
+    //console.log("resultP2p");
+
+    //console.log(r)
   }
 
   useEffect(() => {
