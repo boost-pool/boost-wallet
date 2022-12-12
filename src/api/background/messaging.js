@@ -76,12 +76,17 @@ class BackgroundController {
   };
 
   listen = () => {
-    chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-      if (request.sender === SENDER.webpage) {
-        this._methodList[request.method](request, sendResponse);
-      }
-      return true;
-    });
+    try {
+      chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
+        if (request.sender === SENDER.webpage) {
+          this._methodList[request.method](request, sendResponse);
+        }
+        return true;
+      });
+    } catch (e) {
+
+    }
+
   };
 }
 
