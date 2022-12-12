@@ -78,9 +78,9 @@ export default function Rooms(props) {
    const handleCreateRoom = async (rName: string) => {
       if (account && account.name) {
 
-         let currentRooms = await get("cardano-peers") || {};
+         let currentRooms = await get("cardano-peers-server") || {};
          currentRooms[rName] = {...currentRooms[rName], name: rName, type: "server", seed: '' };
-         await set("cardano-peers", currentRooms);
+         await set("cardano-peers-server", currentRooms);
 
          // ios or android
          if (Capacitor.isNativePlatform()) {
@@ -98,7 +98,7 @@ export default function Rooms(props) {
             console.log("p2p_servers_dict");
             console.log(p2p_servers_dict);
 
-            let currentServers = await get("cardano-peers");
+            let currentServers = await get("cardano-peers-server");
             console.log("currentServers");
             console.log(currentServers);
 
@@ -117,10 +117,10 @@ export default function Rooms(props) {
    const handleJoinRoom = async (rName: string, rAddress:string) => {
       if (account && account.name) {
 
-         let currentRooms = await get("cardano-peers") || {};
+         let currentRooms = await get("cardano-peers-client") || {};
          currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
 
-         await set("cardano-peers", currentRooms);
+         await set("cardano-peers-client", currentRooms);
 
          // ios or android
          if (Capacitor.isNativePlatform()) {
