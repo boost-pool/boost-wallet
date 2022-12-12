@@ -70,43 +70,6 @@ const AppWrapper = (props) => {
     console.log(external);
     await setExternalInDb(external);
 
-    console.log("AppWrapper init p2p12")
-    // @ts-ignore
-
-    /*
-    const whitelisted = await Messaging.sendToBackground({
-      method: METHOD.isWhitelisted,
-      origin: window.origin,
-    });
-    console.log("whitelisted")
-    console.log(whitelisted)
-     */
-
-    console.log("Capacitor.getPlatform()");
-    console.log(Capacitor.getPlatform());
-    // ios or android
-    if (Capacitor.isNativePlatform()) {
-      console.log("you are in mobile device");
-      const bgT = new BackgroundTasks();
-      console.log("bgT");
-      bgT.onInit();
-      console.log(bgT);
-    } else if (Capacitor.getPlatform() !== 'web') {
-      console.log("you are in other device");
-
-
-    } else {
-      console.log("you are in web");
-      console.log("loadP2p");
-      const loadP2p = await Messaging.sendToBackground({
-        method: METHOD.loadP2P,
-        origin: window.origin,
-      });
-      console.log(loadP2p);
-      console.log("p2p_servers_dict");
-      console.log(p2p_servers_dict);
-
-    }
   }
 
   useEffect(() => {

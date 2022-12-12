@@ -366,7 +366,7 @@ export default function Rooms(props) {
                                rooms && Object.keys(rooms).length ? Object.keys(rooms).map((room:string) => {
                                   return <button
                                       key={rooms[room].id}
-                                      onClick={() => onOpenRoom(room)}
+                                      onClick={() => onOpenRoom(rooms[room])}
                                       className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
                                      <div className="flex items-center">
                                         <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://picsum.photos/100/100" width="32" height="32" alt="Marie Zulfikar" />
