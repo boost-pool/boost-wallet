@@ -401,8 +401,8 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
     p2p_client_list = []
 
     try {
-        let currentRooms = await get("cardano-peers") || {};
-        let updatedRooms:any = currentRooms;
+        let currentRooms = await get("cardano-peers-client") || {};
+        let updatedRooms= currentRooms;
 
         let r;
         Object.keys(currentRooms).map(key => {
@@ -421,21 +421,25 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                 meerkat.on('connections', (clients) => {
 
                     if (clients === 0 && currentRooms[key].connected === false) {
-                        get("cardano-peers").then(rooms => {
+                        get("cardano-peers-client").then(rooms => {
                             console.log("rooms");
                             console.log(rooms);
+                            let dict = {};
                             const urooms = Object.keys(rooms).map((key:string) => {
                                 console.log("room0");
                                 console.log(rooms[key]);
                                 if (rooms[key].seed === key){
                                     rooms[key] = {...rooms[key], connected: true, numClients: clients}
                                 }
-                                return rooms[key]
+                                // @ts-ignore
+                                dict[key] = rooms[key];
                             });
-                            console.log("urooms");
-                            console.log(urooms);
+                            console.log("dict");
+                            console.log(dict);
                             // @ts-ignore
                             p2p_client_dict[rooms[key].name] = meerkat;
+                            set("cardano-peers-client", dict).then(()=>  console.log('[info]: db updated'));
+
                         });
                         console.log('[info]: server ready');
                     }
@@ -459,7 +463,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
             }
         });
 
-        await set("cardano-peers", updatedRooms)
+        await set("cardano-peers-client", updatedRooms)
 
         console.log("send response back22");
         sendResponse({
@@ -489,45 +493,45 @@ app.add(METHOD.loadP2P, async (request, sendResponse) => {
     try {
         console.log("try set");
         console.log("try set2222");
-        let currentRooms = await get("cardano-peers") || {};
+        let currentRooms = await get("cardano-peers-server") || {};
         let updatedRooms:any = currentRooms;
 
         console.log("currentRooms");
         console.log(currentRooms);
 
         let r;
+        console.log("Object.keys(currentRooms)");
+        console.log(Object.keys(currentRooms));
         Object.keys(currentRooms).map(key => {
             if (currentRooms[key].type === "server"){
                 console.log("currentRoom  key:");
                 console.log(currentRooms[key]);
-                console.log(currentRooms[key].seed);
                 const meerkat = new Meerkat();
                 const seed = meerkat.seed;
 
-                console.log("meerkat obj created");
-                console.log(meerkat.seed);
-                console.log(meerkat);
 
                 meerkat.on('connections', (clients) => {
 
                     if (clients === 0 && currentRooms[key].connected === false) {
-                        get("cardano-peers").then(rooms => {
+                        get("cardano-peers-server").then(rooms => {
                             console.log("rooms");
                             console.log(rooms);
+                            let dict = {};
                             const urooms = Object.keys(rooms).map((key:string) => {
                                 console.log("room0");
                                 console.log(rooms[key]);
                                 if (rooms[key].seed === key){
                                     rooms[key] = {...rooms[key], connected: true, numClients: clients};
                                 }
-                                return rooms[key]
+                                // @ts-ignore
+                                dict[key] = rooms[key];
                             });
-                            console.log("urooms");
-                            console.log(urooms);
+                            console.log("dict");
+                            console.log(dict);
                             // @ts-ignore
                             p2p_servers_dict[rooms[key].name] = meerkat;
                             //p2p_servers_list.push(meerkat);
-                            set("cardano-peers", urooms).then(()=>  console.log('[info]: db updated'));
+                            set("cardano-peers-server", dict).then(()=>  console.log('[info]: db updated'));
                         });
                         console.log('[info]: server ready');
                     }
@@ -546,6 +550,8 @@ app.add(METHOD.loadP2P, async (request, sendResponse) => {
                 r = {...currentRooms[key], type: "server", seed, clientAddress: meerkat.address(), connected: false };
                 updatedRooms[key] = r;
                 console.log(updatedRooms[key]);
+                console.log("updatedRooms");
+                console.log(updatedRooms);
                 // @ts-ignore
                 p2p_servers_dict[updatedRooms[key].name] = meerkat;
                 //p2p_servers_list.push(meerkat);
@@ -556,7 +562,7 @@ app.add(METHOD.loadP2P, async (request, sendResponse) => {
         console.log(p2p_servers_dict);
         // @ts-ignore
         //p2p_servers_dict[meerkat.seed] = meerkat;
-        await set("cardano-peers", updatedRooms)
+        await set("cardano-peers-server", updatedRooms);
 
         console.log("send response back11");
         sendResponse({
