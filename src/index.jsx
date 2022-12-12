@@ -15,13 +15,13 @@ import i18n from './i18n';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-   <React.StrictMode>
-      <SafeArea top bottom>
-         <I18nextProvider i18n={ i18n }>
-            <App />
-         </I18nextProvider>
-      </SafeArea>
-   </React.StrictMode>
+    <React.StrictMode>
+       <SafeArea top bottom>
+          <I18nextProvider i18n={ i18n }>
+             <App />
+          </I18nextProvider>
+       </SafeArea>
+    </React.StrictMode>
 );
 
 // Enable PWA
@@ -70,7 +70,7 @@ if (Capacitor.getPlatform() !== 'web') {
          secondBack = new Date().getTime();
          if (secondBack - firstBack < timePeriodToExit) {
             const c = confirm(
-               'Do you want to exit?',
+                'Do you want to exit?',
             );
             if (c) {
                CapacitorApp.exitApp();
@@ -96,46 +96,14 @@ if (Capacitor.getPlatform() !== 'web') {
    // PushNotifications.createChannel(notificationChannel)
 }
 
-// Handle notification
-const handleNotifications = async () => {
-
-   // const channelList = { "channels": [{ "id": "default", "name": "Default", "description": "Default", "importance": 3, "visibility": -1000, "sound": "content://settings/system/notification_sound", "vibration": false, "lights": false, "lightColor": "#000000" }, { "id": "pop-notifications", "name": "Pop Notifications", "description": "Pop Notifications", "importance": 0, "visibility": -1000, "sound": "content://settings/system/notification_sound", "vibration": true, "lights": true, "lightColor": "#000000" }] }
-
-   let popNotif = false
-   if (Capacitor.getPlatform() !== 'web') {
-      const listChannel = await LocalNotifications.listChannels();
-      const channels = listChannel.channels
-      const print = channels.filter(channels => channels.id === 'pop-notifications');
-
-      if (JSON.stringify(print[0].importance) > 0) {
-         popNotif = true
-      }
-   } else {
-      popNotif = true
-   }
-
-   const permission = await LocalNotifications.checkPermissions();
-   if (popNotif && permission.display === 'granted') {
-      LocalNotifications.addListener('localNotificationReceived', (notification) => {
-         Toast.show({ text: 'You got a new notification!' });
-      })
-      LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
-         Toast.show({ text: `Notification: ${JSON.stringify(notification.notification.body)}` });
-      })
-   } else {
-      await LocalNotifications.requestPermissions();
-   }
-}
-handleNotifications();
-
 // Service worker
 if (process.env.NODE_ENV === 'production') {
    if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
          navigator.serviceWorker.register('/service-worker.js').then(registration => {
-            console.log('SW registered: ', registration);
+            console.log('SW registered service-worker.js: ', registration);
          }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
+            console.log('SW registration failed service-worker.js: ', registrationError);
          });
       });
    }

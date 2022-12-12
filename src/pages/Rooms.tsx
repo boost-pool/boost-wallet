@@ -76,6 +76,7 @@ export default function Rooms(props) {
    }
 
    const handleCreateRoom = async (rName: string) => {
+
       if (account && account.name) {
 
          let currentRooms = await get("cardano-peers-server") || {};
@@ -91,32 +92,37 @@ export default function Rooms(props) {
          } else {
             console.log("you are in web");
             console.log("createP2PServer");
-            await Messaging.sendToBackground({
-               method: METHOD.loadP2P,
-               origin: window.origin
-            });
-            console.log("p2p_servers_dict");
-            console.log(p2p_servers_dict);
 
-            let currentServers = await get("cardano-peers-server");
-            console.log("currentServers");
-            console.log(currentServers);
+            try {
+               await Messaging.sendToBackground({
+                  method: METHOD.loadP2P,
+                  origin: window.origin
+               });
+               console.log("p2p_servers_dict");
+               console.log(p2p_servers_dict);
 
-            let roomsInAcc = {...account?.rooms} || {};
-            console.log("roomsInAcc");
-            console.log(roomsInAcc);
-            if (roomsInAcc[rName] === undefined){
-               roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", clientAddress: currentServers[rName].clientAddress, seed: currentServers[rName].seed}
-               await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
-               setRooms(roomsInAcc);
-               setAccount({...account, rooms: roomsInAcc});
+               let currentServers = await get("cardano-peers-server");
+               console.log("currentServers");
+               console.log(currentServers);
+
+               let roomsInAcc = {...account?.rooms} || {};
+               console.log("roomsInAcc");
+               console.log(roomsInAcc);
+               if (roomsInAcc[rName] === undefined){
+                  roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", clientAddress: currentServers[rName].clientAddress, seed: currentServers[rName].seed}
+                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+                  setRooms(roomsInAcc);
+                  setAccount({...account, rooms: roomsInAcc});
+               }
+            } catch (e) {
+
             }
          }
       }
    };
    const handleJoinRoom = async (rName: string, rAddress:string) => {
-      if (account && account.name) {
 
+      if (account && account.name) {
 
          // ios or android
          if (Capacitor.isNativePlatform()) {
@@ -125,31 +131,36 @@ export default function Rooms(props) {
          } else if (Capacitor.getPlatform() !== 'web') {
             console.log("you are in other device");
          } else {
+            try {
+               let currentRooms = await get("cardano-peers-client") || {};
+               currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
 
-            let currentRooms = await get("cardano-peers-client") || {};
-            currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
+               await set("cardano-peers-client", currentRooms);
 
-            await set("cardano-peers-client", currentRooms);
+               console.log("you are in web");
+               console.log("joinServerP2P");
+               const joinServerP2P = await Messaging.sendToBackground({
+                  method: METHOD.joinServerP2P,
+                  origin: window.origin
+               });
+               console.log(joinServerP2P);
+               console.log("p2p_servers_dict");
+               console.log(p2p_servers_dict);
 
-            console.log("you are in web");
-            console.log("joinServerP2P");
-            const joinServerP2P = await Messaging.sendToBackground({
-               method: METHOD.joinServerP2P,
-               origin: window.origin
-            });
-            console.log(joinServerP2P);
-            console.log("p2p_servers_dict");
-            console.log(p2p_servers_dict);
+               let roomsInAcc = {...account?.rooms} || {};
+               if (roomsInAcc[rName] === undefined){
+                  roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "client", clientAddress: rAddress, seed: ''}
+                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+                  setRooms(roomsInAcc);
+                  setAccount({...account, rooms: roomsInAcc});
+               }
+            } catch (e) {
 
-            let roomsInAcc = {...account?.rooms} || {};
-            if (roomsInAcc[rName] === undefined){
-               roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "client", clientAddress: rAddress, seed: ''}
-               await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
-               setRooms(roomsInAcc);
-               setAccount({...account, rooms: roomsInAcc});
             }
          }
       }
+
+
    };
 
    const renderTabs1 = () => {

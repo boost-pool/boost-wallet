@@ -33,6 +33,12 @@ export const setSettings = settings => {
   });
 };
 
+export const setPlatform = platform => {
+  Store.update(s => {
+    s.platform = platform;
+  });
+};
+
 export const setCurrentPath = ({path, payload}) => {
   Store.update(s => {
     s.router.history = [...s.router.history, s.router.currentPath];

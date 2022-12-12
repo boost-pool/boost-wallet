@@ -34,7 +34,6 @@ module.exports = merge(require("./webpack.common.js"), {
       new Dotenv({
          path: './.env.production', // load this now instead of the ones in '.env'
       }),
-       /*
       new WorkboxPlugin.GenerateSW({
          // these options encourage the ServiceWorkers to get in there fast
          // and not allow any straggling "old" SWs to hang around
@@ -42,7 +41,6 @@ module.exports = merge(require("./webpack.common.js"), {
          skipWaiting: true,
          maximumFileSizeToCacheInBytes: 5000000,
       }),
-       */
       new MiniCssExtractPlugin({
          filename: 'styles.[fullhash].min.css',
       }),

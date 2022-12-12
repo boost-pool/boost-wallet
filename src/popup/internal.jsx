@@ -18,7 +18,7 @@ root.render(
    <React.StrictMode>
       <SafeArea top bottom>
          <I18nextProvider i18n={ i18n }>
-            <InternalApp />
+            <InternalApp isExtentsion={true} />
          </I18nextProvider>
       </SafeArea>
    </React.StrictMode>

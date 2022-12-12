@@ -17,6 +17,7 @@ import {getRouter} from "./store/selectors";
 import Store from './store';
 import Enable from "./popup/components/Enable";
 import Rooms from "./pages/Rooms";
+import {setPlatform} from "./store/actions";
 
 export const ROUTES = {
     MAIN: '/',
@@ -65,6 +66,7 @@ const MainRoutes = () => {
     }, [location]);
 
     const renderPage =  () => {
+        console.log("isExtentsion4");
         switch (router.currentPath) {
             case ROUTES.MAIN:
                 return <Home />
@@ -81,6 +83,7 @@ const MainRoutes = () => {
         }
     }
 
+    console.log("isExtentsion2");
     return (
         <IonApp>
             <AppWrapper>
@@ -106,7 +109,10 @@ const MainRoutes = () => {
 };
 
 
-function App() {
+const App = ({isExtentsion= false}) => {
+    console.log("isExtentsion");
+    console.log(isExtentsion);
+    setPlatform(isExtentsion);
     return (
         <Router>
             <MainRoutes />

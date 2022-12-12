@@ -19,7 +19,7 @@ root.render(
       <SafeArea top bottom>
          <I18nextProvider i18n={ i18n }>
             <div style={{height: "650px", width: "400px"}}>
-               <App />
+               <App isExtentsion={true}/>
             </div>
          </I18nextProvider>
       </SafeArea>
