@@ -12,6 +12,7 @@ import {METHOD, SENDER, TARGET} from "../api/background/config";
 import {Messaging} from "../api/background/messaging";
 import {BackgroundTasks} from "../api/background/mobile/backgroundTask";
 import {Capacitor} from "@capacitor/core";
+import {p2p_servers_dict} from "../api/background";
 setupIonicReact({});
 
 window.matchMedia("(prefers-color-scheme: dark)").addListener(async (status) => {
@@ -102,6 +103,8 @@ const AppWrapper = (props) => {
         origin: window.origin,
       });
       console.log(loadP2p);
+      console.log("p2p_servers_dict");
+      console.log(p2p_servers_dict);
 
     }
   }

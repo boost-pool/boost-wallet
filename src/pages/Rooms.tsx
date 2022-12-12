@@ -13,6 +13,7 @@ import Store from '../store';
 import {updateAccountByNetworkInDb} from "../db";
 import {setAccount} from "../store/actions";
 import {addressSlice} from "../utils/utils";
+import {get, set} from "../db/storage";
 
 // @ts-ignore
 export default function Rooms(props) {
@@ -60,31 +61,22 @@ export default function Rooms(props) {
    const handleCreateOrJoinRoom = async (rName: string, rId: string) => {
       if (account && account.name && rId && rId.length) {
 
-         let acc = account;
-         let roomsInDb = acc?.rooms || [];
-         console.log("roomsInDb");
-         console.log(roomsInDb);
-         if (!roomsInDb.some((r: { id: string; name: string }) => r.id === rId)){
-            console.log("update account");
-            roomsInDb = [...roomsInDb,{
-               id: rId,
-               name: rName
-            }]
-            acc = {...acc, rooms: roomsInDb};
-            await updateAccountByNetworkInDb(settings.network.net, acc);
-            setRooms(roomsInDb);
-            setAccount(acc);
+         let roomsInAcc = {...account?.rooms} || {};
+         if (roomsInAcc[rName] === undefined){
+            roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", seed: rId}
+            await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+            setRooms(roomsInAcc);
+            setAccount({...account, rooms: roomsInAcc});
          }
 
-         const currentRoomsJSON = localStorage["cardano-p2p-connect-list"] || "[]";
+         let currentRooms = await get("cardano-peers") || {};
+         currentRooms[rName] = {...currentRooms[rId], name: rName, type: "server", seed: rId };
 
-         let currentRooms:any[] = JSON.parse(currentRoomsJSON);
-         currentRooms.push(rId);
-         currentRooms = Array.from(new Set(currentRooms));
-         localStorage["cardano-p2p-connect-list"] = JSON.stringify(currentRooms);
+         await set("cardano-peers", currentRooms);
       }
    };
 
+   // @ts-ignore
    const renderRoomsList = () => (
 
        <>
@@ -203,16 +195,16 @@ export default function Rooms(props) {
 
                          <div className="divide-y divide-gray-200">
                             {
-                               rooms && rooms.length ? rooms.map((room: { name: string ; id: string; }) => {
+                               rooms && Object.keys(rooms).length ? Object.keys(rooms).map((room:string) => {
                                   return <button
-                                      key={room.id}
+                                      key={rooms[room].id}
                                       onClick={() => onOpenRoom(room)}
                                       className="w-full text-left py-2 focus:outline-none focus-visible:bg-indigo-50">
                                      <div className="flex items-center">
                                         <img className="rounded-full items-start flex-shrink-0 mr-3" src="https://picsum.photos/100/100" width="32" height="32" alt="Marie Zulfikar" />
                                         <div>
-                                           <h4 className="text-sm font-semibold text-gray-900">{room.name}</h4>
-                                           <div className="text-[13px]">{room.id} · 2hrs</div>
+                                           <h4 className="text-sm font-semibold text-gray-900">{rooms[room].name}</h4>
+                                           <div className="text-[13px]">{rooms[room].id} · 2hrs</div>
                                         </div>
                                      </div>
                                   </button>

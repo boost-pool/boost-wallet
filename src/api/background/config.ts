@@ -19,6 +19,8 @@ export const METHOD = {
     requestData: 'requestData',
     returnData: 'returnData',
     loadP2P: 'loadP2P',
+    createServerP2P: 'createServerP2P',
+    joinServerP2P: 'joinServerP2P',
 };
 
 /*
