@@ -414,10 +414,41 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                 console.log(currentRooms[key].clientAddress);
                 const meerkat = new Meerkat({identifier: currentRooms[key].clientAddress || ''});
 
-                console.log("meerkat obj created");
-                console.log(meerkat.seed);
-                console.log(meerkat);
+                meerkat.on('server', () => {
+                    console.log('[info]: connected to server');
 
+                    if (currentRooms[key].connected === false) {
+                        get("cardano-peers-client").then(rooms => {
+                            console.log("rooms");
+                            console.log(rooms);
+                            let dict = {};
+                            Object.keys(rooms).map((key:string) => {
+                                console.log("room0");
+                                console.log(rooms[key]);
+                                if (rooms[key].seed === key){
+                                    rooms[key] = {...rooms[key], connected: true}
+                                }
+                                // @ts-ignore
+                                dict[key] = rooms[key];
+                            });
+                            console.log("dict");
+                            console.log(dict);
+                            // @ts-ignore
+                            p2p_client_dict[rooms[key].name] = meerkat;
+                            set("cardano-peers-client", dict).then(()=>  console.log('[info]: db updated'));
+
+                        });
+                        console.log('[info]: server ready');
+                    }
+
+                    /*
+                    meerkat.rpc('YOUR_SERVER_ADDRESS', 'hello', {}, (response) =>
+                        console.log(response)
+                    );
+                    */
+                });
+
+                /*
                 meerkat.on('connections', (clients) => {
 
                     if (clients === 0 && currentRooms[key].connected === false) {
@@ -425,7 +456,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                             console.log("rooms");
                             console.log(rooms);
                             let dict = {};
-                            const urooms = Object.keys(rooms).map((key:string) => {
+                            Object.keys(rooms).map((key:string) => {
                                 console.log("room0");
                                 console.log(rooms[key]);
                                 if (rooms[key].seed === key){
@@ -445,6 +476,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                     }
                     console.log(`[info]: ${clients} clients connected`);
                 });
+                 */
 
                 meerkat.register('hello', (address: any, args: any, callback: (arg0: string) => void) => {
                     console.log(
@@ -484,6 +516,8 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
         });
     }
 });
+
+
 app.add(METHOD.loadP2P, async (request, sendResponse) => {
     console.log("METHOD.loadP2P");
     console.log("request1");

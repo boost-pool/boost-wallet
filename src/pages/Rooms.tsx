@@ -117,10 +117,6 @@ export default function Rooms(props) {
    const handleJoinRoom = async (rName: string, rAddress:string) => {
       if (account && account.name) {
 
-         let currentRooms = await get("cardano-peers-client") || {};
-         currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
-
-         await set("cardano-peers-client", currentRooms);
 
          // ios or android
          if (Capacitor.isNativePlatform()) {
@@ -129,6 +125,12 @@ export default function Rooms(props) {
          } else if (Capacitor.getPlatform() !== 'web') {
             console.log("you are in other device");
          } else {
+
+            let currentRooms = await get("cardano-peers-client") || {};
+            currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
+
+            await set("cardano-peers-client", currentRooms);
+
             console.log("you are in web");
             console.log("joinServerP2P");
             const joinServerP2P = await Messaging.sendToBackground({
