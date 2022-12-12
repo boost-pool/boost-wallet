@@ -93,8 +93,7 @@ export default function Rooms(props) {
             console.log("createP2PServer");
             await Messaging.sendToBackground({
                method: METHOD.loadP2P,
-               origin: window.origin,
-               data: "hello"
+               origin: window.origin
             });
             console.log("p2p_servers_dict");
             console.log(p2p_servers_dict);
@@ -134,7 +133,7 @@ export default function Rooms(props) {
             console.log("joinServerP2P");
             const joinServerP2P = await Messaging.sendToBackground({
                method: METHOD.joinServerP2P,
-               origin: window.origin,
+               origin: window.origin
             });
             console.log(joinServerP2P);
             console.log("p2p_servers_dict");
