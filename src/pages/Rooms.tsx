@@ -14,17 +14,34 @@ import {updateAccountByNetworkInDb} from "../db";
 import {setAccount} from "../store/actions";
 import {addressSlice} from "../utils/utils";
 import {get, set} from "../db/storage";
+import {Tab} from "@headlessui/react";
+import classNames from "classnames";
+import {useTranslation} from "react-i18next";
+import {Capacitor} from "@capacitor/core";
+import {BackgroundTasks} from "../api/background/mobile/backgroundTask";
+import {Messaging} from "../api/background/messaging";
+import {METHOD} from "../api/background/config";
+import {p2p_servers_dict} from "../api/background";
 
+export const P2P_ROOMS_TABS = {
+   CREATE: "CREATE",
+   JOIN: "JOIN",
+   EDIT: "EDIT"
+}
 // @ts-ignore
 export default function Rooms(props) {
+
+   const { t } = useTranslation();
 
    const settings = Store.useState(getSettings);
    const account = Store.useState(getAccount);
    console.log("account");
    console.log(account);
 
-   const [roomId, setRoomId] = useState('');
+   const [roomAddress, setRoomAddress] = useState('');
    const [roomName, setRoomName] = useState('');
+   const [joinRoomName, setJoinRoomName] = useState('');
+   const [selectedTab, setSelectedTab] = useState(P2P_ROOMS_TABS.CREATE);
    const [rooms, setRooms] = useState(account?.rooms || [{
       id: "example_id...",
       name: "Room01",
@@ -58,24 +75,211 @@ export default function Rooms(props) {
       handlePath(ROUTES.CHAT, {room});
    }
 
-   const handleCreateOrJoinRoom = async (rName: string, rId: string) => {
-      if (account && account.name && rId && rId.length) {
-
-         let roomsInAcc = {...account?.rooms} || {};
-         if (roomsInAcc[rName] === undefined){
-            roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", seed: rId}
-            await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
-            setRooms(roomsInAcc);
-            setAccount({...account, rooms: roomsInAcc});
-         }
+   const handleCreateRoom = async (rName: string) => {
+      if (account && account.name) {
 
          let currentRooms = await get("cardano-peers") || {};
-         currentRooms[rName] = {...currentRooms[rId], name: rName, type: "server", seed: rId };
+         currentRooms[rName] = {...currentRooms[rName], name: rName, type: "server", seed: '' };
+         await set("cardano-peers", currentRooms);
+
+         // ios or android
+         if (Capacitor.isNativePlatform()) {
+            console.log("you are in mobile device");
+
+         } else if (Capacitor.getPlatform() !== 'web') {
+            console.log("you are in other device");
+         } else {
+            console.log("you are in web");
+            console.log("createP2PServer");
+            await Messaging.sendToBackground({
+               method: METHOD.loadP2P,
+               origin: window.origin,
+               data: "hello"
+            });
+            console.log("p2p_servers_dict");
+            console.log(p2p_servers_dict);
+
+            let currentServers = await get("cardano-peers");
+            console.log("currentServers");
+            console.log(currentServers);
+
+            let roomsInAcc = {...account?.rooms} || {};
+            console.log("roomsInAcc");
+            console.log(roomsInAcc);
+            if (roomsInAcc[rName] === undefined){
+               roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", clientAddress: currentServers[rName].clientAddress, seed: currentServers[rName].seed}
+               await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+               setRooms(roomsInAcc);
+               setAccount({...account, rooms: roomsInAcc});
+            }
+         }
+      }
+   };
+   const handleJoinRoom = async (rName: string, rAddress:string) => {
+      if (account && account.name) {
+
+         let currentRooms = await get("cardano-peers") || {};
+         currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
 
          await set("cardano-peers", currentRooms);
+
+         // ios or android
+         if (Capacitor.isNativePlatform()) {
+            console.log("you are in mobile device");
+
+         } else if (Capacitor.getPlatform() !== 'web') {
+            console.log("you are in other device");
+         } else {
+            console.log("you are in web");
+            console.log("joinServerP2P");
+            const joinServerP2P = await Messaging.sendToBackground({
+               method: METHOD.joinServerP2P,
+               origin: window.origin,
+            });
+            console.log(joinServerP2P);
+            console.log("p2p_servers_dict");
+            console.log(p2p_servers_dict);
+
+            let roomsInAcc = {...account?.rooms} || {};
+            if (roomsInAcc[rName] === undefined){
+               roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "client", clientAddress: rAddress, seed: ''}
+               await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+               setRooms(roomsInAcc);
+               setAccount({...account, rooms: roomsInAcc});
+            }
+         }
       }
    };
 
+   const renderTabs1 = () => {
+      return <div className="w-full">
+         <Tab.Group defaultIndex={1}>
+
+         </Tab.Group>
+      </div>
+   }
+   const renderTabs = () => {
+
+      return <div className="w-full mt-8">
+            <Tab.Group defaultIndex={0}>
+               <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+                  <Tab
+                      onClick={() => setSelectedTab(P2P_ROOMS_TABS.CREATE)}
+                      className={({ selected }) =>
+                          classNames(
+                              'w-full rounded-lg py-1 text-sm font-medium leading-5',
+                              'focus:outline-none',
+                              selected
+                                  ? 'bg-white shadow text-blue-700'
+                                  : 'hover:bg-white/[0.5] text-white'
+                          )
+                      }
+                  >
+                     {/* @ts-ignore*/}
+                     {t("p2p.create")}
+                  </Tab>
+                  <Tab
+                      onClick={() => setSelectedTab(P2P_ROOMS_TABS.JOIN)}
+                      className={({ selected }) =>
+                          classNames(
+                              'w-full rounded-lg py-1 text-sm font-medium leading-5',
+                              'focus:outline-none',
+                              selected
+                                  ? 'bg-white shadow text-blue-700'
+                                  : 'hover:bg-white/[0.5] text-white'
+                          )
+                      }
+                  >
+                     {/* @ts-ignore*/}
+                     {t("p2p.join")}
+                  </Tab>
+               </Tab.List>
+               <Tab.Panels className="mt-8">
+                  {renderTab()}
+               </Tab.Panels>
+            </Tab.Group>
+         </div>
+
+   }
+   const renderTab = () => {
+
+      switch (selectedTab) {
+
+         case P2P_ROOMS_TABS.CREATE:
+            return <div>
+               <div className="container  mx-auto flex flex-wrap items-center">
+                  <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+                     <h1 className="title-font font-medium text-3xl text-gray-900">
+                        P2P Chat Room
+                     </h1>
+                     <p className="leading-relaxed mt-4">Create a new p2p servet with WebRTC and
+                        WebTorrent trackers.</p>
+                  </div>
+                  <div
+                      className="w-full bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                     <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
+                        Create a room</h2>
+                     <div className="relative mb-4">
+                        <label htmlFor="email"
+                               className="leading-7 text-sm text-gray-600">Name</label>
+                        <input
+                            onChange={(e) => setRoomName(e.target.value)}
+                            type="text" id="roomId" name="roomId"
+                            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+                     </div>
+                     <button
+                         onClick={() => handleCreateRoom(roomName)}
+                         className="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">
+                        Create
+                     </button>
+                     <p className="text-xs text-gray-500 mt-3">
+                        About the Room ID ...</p>
+                  </div>
+               </div>
+            </div>
+         case P2P_ROOMS_TABS.JOIN:
+            return <div>
+               <div className="container  mx-auto flex flex-wrap items-center">
+                  <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+                     <h1 className="title-font font-medium text-3xl text-gray-900">
+                        P2P Chat Room
+                     </h1>
+                     <p className="leading-relaxed mt-4">Connect through WebRTC and
+                        WebTorrent trackers.</p>
+                  </div>
+                  <div
+                      className="w-full bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                     <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Join a room</h2>
+                     <div className="relative mb-4">
+                        <label htmlFor="email"
+                               className="leading-7 text-sm text-gray-600">Room Name</label>
+                        <input
+                            onChange={(e) => setJoinRoomName(e.target.value)}
+                            type="text" id="roomId" name="roomId"
+                            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+                     </div>
+                     <div className="relative mb-4">
+                        <label htmlFor="email"
+                               className="leading-7 text-sm text-gray-600">Room Address</label>
+                        <input
+                            onChange={(e) => setRoomAddress(e.target.value)}
+                            type="text" id="roomId" name="roomId"
+                            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+                     </div>
+                     <button
+                         onClick={() => handleJoinRoom(joinRoomName, roomAddress)}
+                         className="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">
+                        Join
+                     </button>
+                     <p className="text-xs text-gray-500 mt-3">
+                        About the Room ID ...</p>
+                  </div>
+               </div>
+            </div>
+
+         return null;
+      }
+   }
    // @ts-ignore
    const renderRoomsList = () => (
 
@@ -124,45 +328,8 @@ export default function Rooms(props) {
                                            <div
                                                className="container mx-auto flex px-5 md:py-24 items-center justify-center flex-col">
 
-                                              <div>
-                                                 <div className="container  mx-auto flex flex-wrap items-center">
-                                                    <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-                                                       <h1 className="title-font font-medium text-3xl text-gray-900">
-                                                          P2P Chat Room
-                                                       </h1>
-                                                       <p className="leading-relaxed mt-4">Connect through WebRTC and
-                                                          WebTorrent trackers.</p>
-                                                    </div>
-                                                    <div
-                                                        className="w-full bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-                                                       <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Create
-                                                          or join a room</h2>
-                                                       <div className="relative mb-4">
-                                                          <label htmlFor="email"
-                                                                 className="leading-7 text-sm text-gray-600">Name</label>
-                                                          <input
-                                                              onChange={(e) => setRoomName(e.target.value)}
-                                                              type="text" id="roomId" name="roomId"
-                                                              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
-                                                       </div>
-                                                       <div className="relative mb-4">
-                                                          <label htmlFor="email"
-                                                                 className="leading-7 text-sm text-gray-600">Room Id</label>
-                                                          <input
-                                                              onChange={(e) => setRoomId(e.target.value)}
-                                                              type="text" id="roomId" name="roomId"
-                                                              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
-                                                       </div>
-                                                       <button
-                                                           onClick={() => handleCreateOrJoinRoom(roomName, roomId)}
-                                                           className="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">
-                                                          Connect
-                                                       </button>
-                                                       <p className="text-xs text-gray-500 mt-3">
-                                                          About the Room ID ...</p>
-                                                    </div>
-                                                 </div>
-                                              </div>
+
+                                              {renderTabs()}
 
                                            </div>
                                         </section>
