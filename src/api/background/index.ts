@@ -407,85 +407,56 @@ export let p2p_servers_list = [];
 export let p2p_clients_dict = {};
 export let p2p_clients_list = [];
 app.add(METHOD.sendMessageP2P, async (request, sendResponse) => {
-    console.log("METHOD.sendMessageP2P");
 
     try {
-        const message = request;
-        console.log("message");
-        console.log(message);
+        console.log("METHOD.sendMessageP2P");
+        console.log("request2");
+        console.log(request);
+
+        // @ts-ignore
+        if (!request || !request?.room?.name?.length){
+            console.log("Not name in request.room")
+            console.log(request);
+            return;
+        }
+
+        // @ts-ignore
+        const roomName = request?.room?.name || '';
+        // @ts-ignore
+        const clientAddress = request?.room?.clientAddress || '';
+        // @ts-ignore
+        const message = request?.message || '';
+
+        let meerkat: Meerkat;
+        // @ts-ignore
+        if (p2p_clients_dict[roomName] === undefined){
+            meerkat = new Meerkat({identifier: clientAddress || ''});
+        } else {
+            // @ts-ignore
+            meerkat = p2p_clients_dict[roomName];
+        }
+
+        meerkat.on('server', () => {
+            console.log(`[info]: connected to server:${clientAddress}`);
+            meerkat.rpc(clientAddress, 'message', {message}, (response: (arg0: string) => void) => {
+                response(`Message sent :${message}`);
+            });
+        });
+
+        // Update background state
+        // @ts-ignore
+        p2p_clients_dict[roomName] = meerkat;
+
+        sendResponse({
+            // @ts-ignore
+            id: "Send message done",
+            target: TARGET,
+            sender: SENDER.extension,
+        });
     } catch (e) {
 
     }
 
-});
-app.add("xxxx", async (request, sendResponse) => {
-
-    console.log("METHOD.joinServerP2P");
-    console.log(request);
-
-    try {
-        let currentRooms = await get("cardano-peers-client") || {};
-        let updatedRooms= currentRooms;
-
-        let r;
-        Object.keys(currentRooms).map(key => {
-            if (currentRooms[key].type === "client"){
-                const meerkat = new Meerkat({identifier: currentRooms[key].clientAddress || ''});
-
-                meerkat.on('server', () => {
-                    console.log('[info]: connected to server');
-
-                    if (currentRooms[key].connected === false) {
-                        get("cardano-peers-client").then(rooms => {
-                            console.log("rooms");
-                            console.log(rooms);
-                            let dict = {};
-                            Object.keys(rooms).map((key:string) => {
-                                console.log("room0");
-                                console.log(rooms[key]);
-                                if (rooms[key].seed === key){
-                                    rooms[key] = {...rooms[key], connected: true}
-                                }
-                                // @ts-ignore
-                                dict[key] = rooms[key];
-                            });
-                            set("cardano-peers-client", dict).then(()=> console.log('[info]: db updated'));
-
-                        });
-                        console.log('[info]: server ready');
-                    }
-                });
-
-                console.log("update currentRooms dict");
-                // @ts-ignore
-                r = {...currentRooms[key], clientAddress: currentRooms[key].clientAddress, connected: false };
-                updatedRooms[key] = r;
-                console.log(updatedRooms[key]);
-                // @ts-ignore
-                p2p_clients_dict[updatedRooms[key].name] = meerkat;
-            }
-        });
-
-        await set("cardano-peers-client", updatedRooms)
-
-        console.log("send response back22");
-        sendResponse({
-            // @ts-ignore
-            id: "request.id",
-            error: "testing2",
-            target: TARGET,
-            data: updatedRooms,
-            sender: SENDER.extension,
-        });
-    } catch (e) {
-        sendResponse({
-            // @ts-ignore
-            id: "request.error",
-            error: e,
-            target: TARGET,
-            sender: SENDER.extension,
-        });
-    }
 });
 
 app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
@@ -687,7 +658,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
 
         // Update background state
         // @ts-ignore
-        //p2p_servers_dict[roomName] = meerkat;
+        p2p_servers_dict[roomName] = meerkat;
         console.log("try to save in localStorage");
         console.log(p2p_servers_dict);
         //await set("cardano-peers-server", p2p_servers_dict);
@@ -698,130 +669,6 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
             target: TARGET,
             sender: SENDER.extension,
         });
-        /*
-        console.log("try set");
-        console.log("try set2222");
-        let currentRooms = await get("cardano-peers-server") || {};
-        let updatedRooms:any = currentRooms;
-
-        console.log("currentRooms");
-        console.log(currentRooms);
-
-        let r;
-        console.log("Object.keys(currentRooms)");
-        console.log(Object.keys(currentRooms));
-        Object.keys(currentRooms).map(key => {
-            if (currentRooms[key].type === "server"){
-                console.log("currentRoom  key:");
-                console.log(currentRooms[key]);
-                const meerkat = new Meerkat();
-                const seed = meerkat.seed;
-                meerkat.on('connections', (clients) => {
-
-                    if (clients === 0 && currentRooms[key].connected === false) {
-                        get("cardano-peers-server").then(rooms => {
-                            console.log("rooms");
-                            console.log(rooms);
-                            let dict = {};
-                            Object.keys(rooms).map((key:string) => {
-                                console.log("room0");
-                                console.log(rooms[key]);
-                                if (rooms[key].seed === key){
-                                    rooms[key] = {...rooms[key], connected: true, numClients: clients};
-                                }
-                                // @ts-ignore
-                                dict[key] = rooms[key];
-                            });
-                            console.log("dict");
-                            console.log(dict);
-                            //p2p_servers_list.push(meerkat);
-                            set("cardano-peers-server", dict).then(()=>  console.log('[info]: db updated'));
-                        });
-                        console.log('[info]: server ready');
-                    }
-                    console.log(`[info]: ${clients} clients connected`);
-                });
-
-                meerkat.register('hello', (address: any, args: any, callback: (arg0: string) => void) => {
-                    console.log("hello call received");
-                    console.log(
-                        `[info]: rpc call invoked by address ${address} into window.cardano`
-                    );
-
-                    console.log("address");
-                    console.log(address);
-                    console.log("args");
-                    console.log(args);
-                    callback('hello world');
-                });
-
-
-                meerkat.register('message', (address: any, args: any, callback: (arg0: string) => void) => {
-                    console.log("message call received");
-                    console.log(
-                        `[info]: rpc call invoked by address ${address} into window.cardano`
-                    );
-
-                    console.log("request");
-                    console.log(request);
-                    console.log("address");
-                    console.log(address);
-                    console.log("args");
-                    console.log(args);
-
-                    getAccountFromDb().then(acc => {
-                        getNetworkFromDb().then(network => {
-                            console.log("Try to store message in db")
-                            let account = acc[network.net];
-                            let rooms = account?.rooms;
-                            // @ts-ignore
-                            const roomName = request?.roomName;
-                            rooms[roomName] = {...rooms[roomName], messages: [...rooms[roomName]?.messages, {
-                                    message: args,
-                                    sender: 'SELF',
-                                    sent: true,
-                                    time: moment.utc().format("YYYY-MM-DD h:mm:ss")
-                                }]}
-
-                            account = {...account, rooms: rooms}
-                            updateAccountByNetworkInDb(network.net, account);
-                            setAccount(account);
-                        });
-                    });
-
-                    callback('hello world after message2!');
-                });
-
-                console.log("update currentRooms dict");
-                // @ts-ignore
-                r = {...currentRooms[key], type: "server", seed, clientAddress: meerkat.address(), connected: false };
-                updatedRooms[key] = r;
-                console.log(updatedRooms[key]);
-                console.log("updatedRooms");
-                console.log(updatedRooms);
-                // @ts-ignore
-                p2p_servers_dict[updatedRooms[key].name] = meerkat;
-                //p2p_servers_list.push(meerkat);
-            }
-        });
-
-        console.log("update bg state");
-        console.log(p2p_servers_dict);
-        // @ts-ignore
-        //p2p_servers_dict[meerkat.seed] = meerkat;
-        await set("cardano-peers-server", updatedRooms);
-
-        console.log("send response back11");
-        sendResponse({
-            // @ts-ignore
-            id: "request.id",
-            error: "testing2",
-            target: TARGET,
-            data: updatedRooms,
-            sender: SENDER.extension,
-        });
-
-         */
     } catch (e) {
         console.log("Error in loadP2P bg");
         console.log(e);
