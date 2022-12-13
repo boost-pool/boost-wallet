@@ -89,7 +89,11 @@ export const createAccount = async (
     poolId: '',
     rewardsSum: 0,
     withdrawableAmount: 0,
-    mode: 'Full'
+    mode: 'Full',
+    rooms: {
+      server: {},
+      client: {}
+    }
   };
   account["preprod"] = testnetAccount;
   account["preview"] = testnetAccount;
@@ -110,7 +114,11 @@ export const createAccount = async (
     poolId: '',
     rewardsSum: 0,
     withdrawableAmount: 0,
-    mode: 'Full'
+    mode: 'Full',
+    rooms: {
+      server: {},
+      client: {}
+    }
   };
 
   account = {...account, name, id: undefined}

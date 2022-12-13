@@ -42,19 +42,10 @@ export default function Rooms(props) {
    const [roomName, setRoomName] = useState('');
    const [joinRoomName, setJoinRoomName] = useState('');
    const [selectedTab, setSelectedTab] = useState(P2P_ROOMS_TABS.CREATE);
-   const [rooms, setRooms] = useState(account?.rooms || [{
-      id: "example_id...",
-      name: "Room01",
-      clientAddress: 'addrP2P2adsacsasljnacaadc',
-      messages: [{
-         id: '',
-         method: '',
-         actions: {},
-         text: '',
-         time: ''
-      }]
-   }]);
-
+   const [rooms, _] = useState(account?.rooms || {
+      server: {},
+      client: {}
+   });
 
    useEffect(() => {
 
@@ -82,9 +73,11 @@ export default function Rooms(props) {
 
       if (account && account.name) {
 
+         /*
          let currentRooms = await get("cardano-peers-server") || {};
          currentRooms[rName] = {...currentRooms[rName], name: rName, type: "server", seed: '' };
          await set("cardano-peers-server", currentRooms);
+          */
 
          // ios or android
          if (Capacitor.isNativePlatform()) {
@@ -98,9 +91,14 @@ export default function Rooms(props) {
 
             try {
                await Messaging.sendToBackground({
-                  method: METHOD.loadP2P,
-                  origin: window.origin
+                  method: METHOD.createServerP2P,
+                  origin: window.origin,
+                  accountName: account.name,
+                  network: settings.network.net,
+                  room: {name: rName}
                });
+
+               /*
                console.log("p2p_servers_dict");
                console.log(p2p_servers_dict);
 
@@ -108,15 +106,17 @@ export default function Rooms(props) {
                console.log("currentServers");
                console.log(currentServers);
 
-               let roomsInAcc = {...account?.rooms} || {};
+               let roomsInAcc = account?.rooms || {};
                console.log("roomsInAcc");
                console.log(roomsInAcc);
                if (roomsInAcc[rName] === undefined){
                   roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", clientAddress: currentServers[rName].clientAddress, seed: currentServers[rName].seed}
-                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: {...account.rooms, server: roomsInAcc}});
                   setRooms(roomsInAcc);
-                  setAccount({...account, rooms: roomsInAcc});
+                  setAccount({...account, rooms: {...account.rooms, server: roomsInAcc}});
                }
+                */
+
             } catch (e) {
 
             }
@@ -135,6 +135,14 @@ export default function Rooms(props) {
             console.log("you are in other device");
          } else {
             try {
+               await Messaging.sendToBackground({
+                  method: METHOD.joinServerP2P,
+                  origin: window.origin,
+                  accountName: account.name,
+                  network: settings.network.net,
+                  room: {name: rName, clientAddress: rAddress}
+               });
+               /*
                let currentRooms = await get("cardano-peers-client") || {};
                currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
 
@@ -150,20 +158,19 @@ export default function Rooms(props) {
                console.log("p2p_servers_dict");
                console.log(p2p_servers_dict);
 
-               let roomsInAcc = {...account?.rooms} || {};
+               let roomsInAcc = account?.rooms || {};
                if (roomsInAcc[rName] === undefined){
                   roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "client", clientAddress: rAddress, seed: ''}
-                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: roomsInAcc});
+                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: {...account.rooms, client: roomsInAcc}});
                   setRooms(roomsInAcc);
-                  setAccount({...account, rooms: roomsInAcc});
+                  setAccount({...account, rooms: {...account.rooms, client: roomsInAcc}});
                }
+               */
             } catch (e) {
 
             }
          }
       }
-
-
    };
 
    const renderTabs1 = () => {
@@ -302,27 +309,27 @@ export default function Rooms(props) {
          <div className="space-y-2">
 
             {
-               rooms && Object.keys(rooms).length ? Object.keys(rooms).map((room:any, index:number) => {
+               rooms && Object.keys(rooms.server).length ? Object.keys(rooms.server).map((room:any, index:number) => {
 
                   return <header className="pt-6 pb-4 px-5 border-b border-gray-200">
                      <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center">
                            <a className="inline-flex items-start p-2 mr-3 bg-blue-200 rounded-full" href="#0">
-                              {rooms[room]?.name && rooms[room].name.length && rooms[room].name[0]}
+                              {rooms.server[room]?.name && rooms.server[room].name.length && rooms.server[room].name[0]}
                            </a>
                            <div className="pr-1">
                               <a className="inline-flex text-gray-800 hover:text-gray-900" href="#0">
-                                 <h2 className="text-xl leading-snug font-bold">{rooms[room].name}</h2>
+                                 <h2 className="text-xl leading-snug font-bold">{rooms.server[room].name}</h2>
                               </a>
                               <a
-                                  onClick={() => onCopy(rooms[room]?.clientAddress)}
+                                  onClick={() => onCopy(rooms.server[room]?.clientAddress)}
                                   className="block text-sm font-medium hover:text-indigo-500 cursor-pointer"
-                              >{addressSlice(rooms[room]?.clientAddress || '', 7)}</a>
+                              >{addressSlice(rooms.server[room]?.clientAddress || '', 7)}</a>
                            </div>
                         </div>
                         <div className="relative inline-flex flex-shrink-0">
                            <button
-                               onClick={() => onOpenRoom(rooms[room])}
+                               onClick={() => onOpenRoom(rooms.server[room])}
                                className="p-1 px-3 inline-flex text-gray-400 hover:text-gray-500 rounded-full focus:ring-0 outline-none focus:outline-none border-2">
                                  <span className="">
                                     OPEN
@@ -343,7 +350,64 @@ export default function Rooms(props) {
                               <path
                                   d="M8 8.992a2 2 0 1 1-.002-3.998A2 2 0 0 1 8 8.992Zm-.7 6.694c-.1-.1-4.2-3.696-4.2-3.796C1.7 10.69 1 8.892 1 6.994 1 3.097 4.1 0 8 0s7 3.097 7 6.994c0 1.898-.7 3.697-2.1 4.996-.1.1-4.1 3.696-4.2 3.796-.4.3-1 .3-1.4-.1Zm-2.7-4.995L8 13.688l3.4-2.997c1-1 1.6-2.198 1.6-3.597 0-2.798-2.2-4.996-5-4.996S3 4.196 3 6.994c0 1.399.6 2.698 1.6 3.697 0-.1 0-.1 0 0Z"/>
                            </svg>
-                           <span className="text-sm whitespace-nowrap ml-2">Peers {account?.rooms?.length || 0}</span>
+                           <span className="text-sm whitespace-nowrap ml-2">Peers {account?.rooms?.server?.length || 0}</span>
+                        </div>
+                        <div className="flex items-center">
+                           <svg className="w-4 h-4 fill-current flex-shrink-0 text-gray-400" viewBox="0 0 16 16">
+                              <path
+                                  d="M11 0c1.3 0 2.6.5 3.5 1.5 1 .9 1.5 2.2 1.5 3.5 0 1.3-.5 2.6-1.4 3.5l-1.2 1.2c-.2.2-.5.3-.7.3-.2 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l1.1-1.2c.6-.5.9-1.3.9-2.1s-.3-1.6-.9-2.2C12 1.7 10 1.7 8.9 2.8L7.7 4c-.4.4-1 .4-1.4 0-.4-.4-.4-1 0-1.4l1.2-1.1C8.4.5 9.7 0 11 0ZM8.3 12c.4-.4 1-.5 1.4-.1.4.4.4 1 0 1.4l-1.2 1.2C7.6 15.5 6.3 16 5 16c-1.3 0-2.6-.5-3.5-1.5C.5 13.6 0 12.3 0 11c0-1.3.5-2.6 1.5-3.5l1.1-1.2c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4L2.9 8.9c-.6.5-.9 1.3-.9 2.1s.3 1.6.9 2.2c1.1 1.1 3.1 1.1 4.2 0L8.3 12Zm1.1-6.8c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4l-4.2 4.2c-.2.2-.5.3-.7.3-.2 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l4.2-4.2Z"/>
+                           </svg>
+                           <a className="text-sm font-medium whitespace-nowrap text-indigo-500 hover:text-indigo-600 ml-2"
+                              href="#0">Quick Link</a>
+                        </div>
+                     </div>
+                  </header>
+
+               }) : null
+            }
+            {
+               rooms && Object.keys(rooms.client).length ? Object.keys(rooms.client).map((room:any, index:number) => {
+
+                  return <header className="pt-6 pb-4 px-5 border-b border-gray-200">
+                     <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center">
+                           <a className="inline-flex items-start p-2 mr-3 bg-blue-200 rounded-full" href="#0">
+                              {rooms.client[room]?.name && rooms.client[room].name.length && rooms.client[room].name[0]}
+                           </a>
+                           <div className="pr-1">
+                              <a className="inline-flex text-gray-800 hover:text-gray-900" href="#0">
+                                 <h2 className="text-xl leading-snug font-bold">{rooms.client[room].name}</h2>
+                              </a>
+                              <a
+                                  onClick={() => onCopy(rooms.client[room]?.clientAddress)}
+                                  className="block text-sm font-medium hover:text-indigo-500 cursor-pointer"
+                              >{addressSlice(rooms.client[room]?.clientAddress || '', 7)}</a>
+                           </div>
+                        </div>
+                        <div className="relative inline-flex flex-shrink-0">
+                           <button
+                               onClick={() => onOpenRoom(rooms.client[room])}
+                               className="p-1 px-3 inline-flex text-gray-400 hover:text-gray-500 rounded-full focus:ring-0 outline-none focus:outline-none border-2">
+                                 <span className="">
+                                    OPEN
+                                 </span>
+                           </button>
+                           <button
+                               className="ml-2 p-1 px-3 inline-flex text-gray-400 hover:text-gray-500 rounded-full focus:ring-0 outline-none focus:outline-none border-2">
+                                 <span className="">
+                                    DELETE
+                                 </span>
+                           </button>
+
+                        </div>
+                     </div>
+                     <div className="flex flex-wrap justify-center sm:justify-start space-x-4">
+                        <div className="flex items-center">
+                           <svg className="w-4 h-4 fill-current flex-shrink-0 text-gray-400" viewBox="0 0 16 16">
+                              <path
+                                  d="M8 8.992a2 2 0 1 1-.002-3.998A2 2 0 0 1 8 8.992Zm-.7 6.694c-.1-.1-4.2-3.696-4.2-3.796C1.7 10.69 1 8.892 1 6.994 1 3.097 4.1 0 8 0s7 3.097 7 6.994c0 1.898-.7 3.697-2.1 4.996-.1.1-4.1 3.696-4.2 3.796-.4.3-1 .3-1.4-.1Zm-2.7-4.995L8 13.688l3.4-2.997c1-1 1.6-2.198 1.6-3.597 0-2.798-2.2-4.996-5-4.996S3 4.196 3 6.994c0 1.399.6 2.698 1.6 3.697 0-.1 0-.1 0 0Z"/>
+                           </svg>
+                           <span className="text-sm whitespace-nowrap ml-2">Peers {account?.rooms?.client?.length || 0}</span>
                         </div>
                         <div className="flex items-center">
                            <svg className="w-4 h-4 fill-current flex-shrink-0 text-gray-400" viewBox="0 0 16 16">

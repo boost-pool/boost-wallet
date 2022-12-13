@@ -8,7 +8,7 @@ import {
 } from "../../db";
 import {EmurgoModule} from "../../lib/emurgo";
 import Meerkat from '@fabianbormann/meerkat';
-import {p2p_client_dict} from "../background";
+import {p2p_clients_dict} from "../background";
 import {get} from "../../db/storage";
 import Moment from 'moment';
 // @ts-ignore
@@ -482,14 +482,34 @@ export const SendP2PMessage = async (room, message) => {
     console.log("SendP2PMessage");
     console.log("room");
     console.log(room);
-    if (p2p_client_dict && p2p_client_dict[room.name] !== undefined){
+    if (p2p_clients_dict && p2p_clients_dict[room.name] !== undefined){
         console.log("meerkat instance already exists");
-        const meerkat = p2p_client_dict[room.name];
+        const meerkat = p2p_clients_dict[room.name];
         meerkat.on('server', () => {
             console.log('[info]: connected to server');
-            meerkat.rpc(room.clientAddress, 'hello', {data: message}, (response) => {
-                    console.log(response)
-                    console.log('[info]: message sent');
+            meerkat.rpc(room.clientAddress, 'message', {data: message}, (response) => {
+                console.log(response)
+                console.log('[info]: message sent');
+
+                getAccountFromDb().then(acc => {
+                    getNetworkFromDb().then(network => {
+                         const rooms = acc[network.net].rooms || {};
+                         if (Object.keys(rooms).length){
+                             Object.keys(rooms).map(roomName => {
+                                 if (roomName === room.name){
+                                     const messages = rooms[roomName].messages || [];
+                                     rooms[roomName] = {...rooms[roomName], messages: [...messages, {
+                                             message: message,
+                                             sender: 'SELF',
+                                             sent: true,
+                                             time: moment.utc().format("YYYY-MM-DD h:mm:ss")
+                                         }]}
+
+                                 }
+                             });
+                         }
+                    });
+                });
 
                 get("cardano-peers-client").then(rooms => {
                     if (rooms){
@@ -502,14 +522,15 @@ export const SendP2PMessage = async (room, message) => {
                                         sent: true,
                                         time: moment.utc().format("YYYY-MM-DD h:mm:ss")
                                     }]}
-                                getAccountFromDb().then(acc => {
-                                    getNetworkFromDb().then(network => {
-                                        acc = {...acc, rooms: rooms[roomName]}
-                                        updateAccountByNetworkInDb(network.net, acc);
-                                        setAccount(acc[network.net]);
-                                    });
-                                });
+
                             }
+                        });
+                        getAccountFromDb().then(acc => {
+                            getNetworkFromDb().then(network => {
+                                acc = {...acc, rooms: rooms}
+                                updateAccountByNetworkInDb(network.net, acc);
+                                setAccount(acc[network.net]);
+                            });
                         });
                     }
                 });
@@ -520,7 +541,7 @@ export const SendP2PMessage = async (room, message) => {
         const meerkat = new Meerkat({ identifier: room.clientAddress });
         meerkat.on('server', () => {
             console.log('[info]: connected to server');
-            meerkat.rpc(room.clientAddress, 'hello', {data: message}, (response) => {
+            meerkat.rpc(room.clientAddress, 'message', {data: message}, (response) => {
                 console.log(response)
                 console.log('[info]: message sent');
                 get("cardano-peers-client").then(rooms => {
@@ -534,14 +555,14 @@ export const SendP2PMessage = async (room, message) => {
                                         sent: true,
                                         time: moment.utc().format("YYYY-MM-DD h:mm:ss")
                                     }]}
-                                getAccountFromDb().then(acc => {
-                                    getNetworkFromDb().then(network => {
-                                        acc[network.net] = {...acc[network.net], rooms: rooms[roomName]}
-                                        updateAccountByNetworkInDb(network.net, acc[network.net]);
-                                        setAccount(acc[network.net]);
-                                    });
-                                });
                             }
+                        });
+                        getAccountFromDb().then(acc => {
+                            getNetworkFromDb().then(network => {
+                                acc = {...acc, rooms: rooms}
+                                updateAccountByNetworkInDb(network.net, acc);
+                                setAccount(acc[network.net]);
+                            });
                         });
                     }
                 });
