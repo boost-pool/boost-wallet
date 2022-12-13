@@ -14,6 +14,7 @@ import {Messaging} from "../api/background/messaging";
 import {METHOD} from "../api/background/config";
 //import roomSVG from "../resources/img/room.svg";
 import {SendP2PMessage} from "../api/extension"
+import {Capacitor} from "@capacitor/core";
 
 export default function P2PChat() {
 
@@ -49,16 +50,26 @@ export default function P2PChat() {
 
       try {
          if (text.length){
-            await SendP2PMessage(router?.payload?.room, message);
-         }
+            // ios or android
+            if (Capacitor.isNativePlatform()) {
+               console.log("you are in mobile device");
 
-         /*
-         await Messaging.sendToBackground({
-            method: METHOD.sendMessageP2P,
-            origin: window.origin,
-            data: message
-         });
-         */
+            } else if (Capacitor.getPlatform() !== 'web') {
+               console.log("you are in other device");
+            } else {
+               console.log("you are in web device");
+               try {
+                  await Messaging.sendToBackground({
+                     method: METHOD.sendMessageP2P,
+                     origin: window.origin,
+                     message: text,
+                     room: {name: router?.payload?.room?.name, clientAddress: router?.payload?.room?.clientAddress}
+                  });
+               } catch (e) {
+
+               }
+            }
+         }
       } catch (e) {
 
 

@@ -410,7 +410,7 @@ app.add(METHOD.sendMessageP2P, async (request, sendResponse) => {
 
     try {
         console.log("METHOD.sendMessageP2P");
-        console.log("request2");
+        console.log("request3");
         console.log(request);
 
         // @ts-ignore
@@ -421,32 +421,28 @@ app.add(METHOD.sendMessageP2P, async (request, sendResponse) => {
         }
 
         // @ts-ignore
-        const roomName = request?.room?.name || '';
-        // @ts-ignore
         const clientAddress = request?.room?.clientAddress || '';
         // @ts-ignore
         const message = request?.message || '';
 
-        let meerkat: Meerkat;
-        // @ts-ignore
-        if (p2p_clients_dict[roomName] === undefined){
-            meerkat = new Meerkat({identifier: clientAddress || ''});
-        } else {
-            // @ts-ignore
-            meerkat = p2p_clients_dict[roomName];
-        }
+        let meerkat = new Meerkat({identifier: clientAddress || ''});
+
+        console.log("new meerkat")
 
         meerkat.on('server', () => {
-            console.log(`[info]: connected to server:${clientAddress}`);
+            console.log(`[info]: SendMessage-> connected to server: ${clientAddress}`);
             meerkat.rpc(clientAddress, 'message', {message}, (response: (arg0: string) => void) => {
-                response(`Message sent :${message}`);
+                console.log(`Message sent :${message}`)
+                console.log(`To server :${clientAddress}`)
+                console.log(`By user :${meerkat.address()}`)
+                //response(`Message sent: ${message}`);
             });
         });
 
-        // Update background state
-        // @ts-ignore
-        p2p_clients_dict[roomName] = meerkat;
+        console.log("sendResponse_");
 
+        console.log("p2p_servers_dict");
+        console.log(p2p_servers_dict);
         sendResponse({
             // @ts-ignore
             id: "Send message done",
@@ -476,7 +472,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
         // @ts-ignore
         const roomName = request?.room?.name || '';
         // @ts-ignore
-        const clientAddress = request?.room?.clientAddress || '';
+        let clientAddress = request?.room?.clientAddress || '';
         // @ts-ignore
         const accountName = request?.accountName || '';
         // @ts-ignore
@@ -485,10 +481,15 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
         let meerkat: Meerkat;
         // @ts-ignore
         if (p2p_clients_dict[roomName] === undefined){
+            console.log("new meerkat0")
             meerkat = new Meerkat({identifier: clientAddress || ''});
         } else {
+            console.log("get meerkat0")
+            // @ts-ignore
+            console.log(p2p_clients_dict[roomName]);
             // @ts-ignore
             meerkat = p2p_clients_dict[roomName];
+            clientAddress = meerkat.address();
         }
 
         meerkat.on('server', () => {
@@ -496,15 +497,15 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
 
             getAccountFromDb().then(account => {
                 let acc = account[network];
-                let serverRooms = acc?.rooms?.server || {};
-                serverRooms[roomName] = {
-                    ...serverRooms,
+                let clientRooms = acc?.rooms?.client || {};
+                clientRooms[roomName] = {
+                    ...clientRooms,
                     name: roomName,
                     seed: meerkat.seed,
-                    clientAddress: meerkat.address(),
+                    clientAddress: clientAddress,
                     connected: true
                 }
-                acc.rooms.server = serverRooms;
+                acc.rooms.client = clientRooms;
                 updateAccountByNameAndNetworkInDb(network, accountName, acc);
                 setAccount(acc);
             });
@@ -542,7 +543,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
         // Update background state
         // @ts-ignore
         p2p_clients_dict[roomName] = meerkat;
-        console.log("try to save in localStorage");
+        console.log("p2p_clients_dict in localStorage");
         console.log(p2p_clients_dict);
         //await set("cardano-peers-client", p2p_clients_dict);
 
