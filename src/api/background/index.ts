@@ -614,7 +614,6 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
     // @ts-ignore
     const network = request?.network || '';
 
-    console.log("get parameters OK");
     try {
         let meerkat: Meerkat;
         // @ts-ignore
@@ -625,16 +624,12 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
             meerkat = p2p_servers_dict[roomName];
         }
 
-        console.log("get meerkat OK");
-
         let connected = false;
         meerkat.on('connections', (clients:number) => {
             if (clients === 0 && connected === false) {
                 connected = true;
                 console.log('[info]: server ready');
-
                 getAccountFromDb(accountName).then(account => {
-                    console.log("get account OK");
                     let acc = account[network];
                     let serverRooms = acc?.rooms?.server || {};
                     serverRooms[roomName] = {
@@ -647,12 +642,8 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                     }
                     acc.rooms.server = serverRooms;
 
-                    console.log("hey1");
                     updateAccountByNameAndNetworkInDb(network, accountName, acc);
-                    console.log("hey2");
-                    console.log(acc);
                     setAccount(acc);
-                    console.log("update account OK");
                 });
             }
             console.log(`[info]: ${clients} clients connected in room ${roomName}`);
@@ -669,9 +660,6 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                 let serverRooms = acc?.rooms?.server || {};
 
                 let serverName = Object.keys(serverRooms).find(sname => {
-                    console.log("seeds:");
-                    console.log(serverRooms[sname].seed);
-                    console.log(meerkat.seed);
                     return serverRooms[sname].seed === meerkat.seed;
                 });
 

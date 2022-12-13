@@ -35,8 +35,6 @@ export default function Rooms(props) {
 
    const settings = Store.useState(getSettings);
    const account = Store.useState(getAccount);
-   console.log("account");
-   console.log(account);
 
    const [roomAddress, setRoomAddress] = useState('');
    const [roomName, setRoomName] = useState('');
@@ -64,8 +62,6 @@ export default function Rooms(props) {
 
    const onOpenRoom = async (room: any) => {
 
-      console.log("onOpenRoom");
-      console.log(room);
       handlePath(ROUTES.CHAT, {room});
    }
 
@@ -87,8 +83,6 @@ export default function Rooms(props) {
             console.log("you are in other device");
          } else {
             console.log("you are in web");
-            console.log("createP2PServer");
-
             try {
                await Messaging.sendToBackground({
                   method: METHOD.createServerP2P,
@@ -97,26 +91,6 @@ export default function Rooms(props) {
                   network: settings.network.net,
                   room: {name: rName}
                });
-
-               /*
-               console.log("p2p_servers_dict");
-               console.log(p2p_servers_dict);
-
-               let currentServers = await get("cardano-peers-server");
-               console.log("currentServers");
-               console.log(currentServers);
-
-               let roomsInAcc = account?.rooms || {};
-               console.log("roomsInAcc");
-               console.log(roomsInAcc);
-               if (roomsInAcc[rName] === undefined){
-                  roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "server", clientAddress: currentServers[rName].clientAddress, seed: currentServers[rName].seed}
-                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: {...account.rooms, server: roomsInAcc}});
-                  setRooms(roomsInAcc);
-                  setAccount({...account, rooms: {...account.rooms, server: roomsInAcc}});
-               }
-                */
-
             } catch (e) {
 
             }
@@ -134,6 +108,7 @@ export default function Rooms(props) {
          } else if (Capacitor.getPlatform() !== 'web') {
             console.log("you are in other device");
          } else {
+            console.log("you are in web device");
             try {
                await Messaging.sendToBackground({
                   method: METHOD.joinServerP2P,
@@ -142,30 +117,6 @@ export default function Rooms(props) {
                   network: settings.network.net,
                   room: {name: rName, clientAddress: rAddress}
                });
-               /*
-               let currentRooms = await get("cardano-peers-client") || {};
-               currentRooms[rName] = {...currentRooms[rName], name: rName, type: "client", clientAddress: rAddress, seed: '' };
-
-               await set("cardano-peers-client", currentRooms);
-
-               console.log("you are in web");
-               console.log("joinServerP2P");
-               const joinServerP2P = await Messaging.sendToBackground({
-                  method: METHOD.joinServerP2P,
-                  origin: window.origin
-               });
-               console.log(joinServerP2P);
-               console.log("p2p_servers_dict");
-               console.log(p2p_servers_dict);
-
-               let roomsInAcc = account?.rooms || {};
-               if (roomsInAcc[rName] === undefined){
-                  roomsInAcc[rName] = {...roomsInAcc, name: rName, type: "client", clientAddress: rAddress, seed: ''}
-                  await updateAccountByNetworkInDb(settings.network.net, {...account, rooms: {...account.rooms, client: roomsInAcc}});
-                  setRooms(roomsInAcc);
-                  setAccount({...account, rooms: {...account.rooms, client: roomsInAcc}});
-               }
-               */
             } catch (e) {
 
             }
