@@ -21,6 +21,7 @@ export const METHOD = {
     loadP2P: 'loadP2P',
     createServerP2P: 'createServerP2P',
     joinServerP2P: 'joinServerP2P',
+    sendMessageP2P: 'sendMessageP2P',
 };
 
 /*

@@ -10,12 +10,18 @@ import {getAccount, getRouter} from "../store/selectors";
 import Store from '../store';
 import {handlePath} from "../components/routing";
 import {ROUTES} from "../App";
+import {Messaging} from "../api/background/messaging";
+import {METHOD} from "../api/background/config";
 //import roomSVG from "../resources/img/room.svg";
-
+import {SendP2PMessage} from "../api/extension"
 
 export default function P2PChat() {
 
    const router = Store.useState(getRouter);
+   const [text, setText] = useState('');
+   const [messagges, setMessagges] = useState([{
+
+   }]);
 
    console.log("router");
    console.log(router);
@@ -33,7 +39,57 @@ export default function P2PChat() {
    const openCapacitorSite = async (site:string) => {
       await Browser.open({ url: site });
    };
+   const onSendMessage = async (message:string) => {
 
+      console.log("onSendMessage");
+      console.log("router?.payload?.room");
+      console.log(router?.payload?.room);
+      console.log("text");
+      console.log(text);
+
+      try {
+         if (text.length){
+            await SendP2PMessage(router?.payload?.room, message);
+         }
+
+         /*
+         await Messaging.sendToBackground({
+            method: METHOD.sendMessageP2P,
+            origin: window.origin,
+            data: message
+         });
+         */
+      } catch (e) {
+
+
+      }
+   };
+
+   const renderSelfMessage = () => {
+     return <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
+        <div>
+           <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
+              <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p>
+           </div>
+           <span className="text-xs text-gray-500 leading-none">2 min ago</span>
+        </div>
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+     </div>
+
+   };
+   const renderMessage = () => {
+     return <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg">
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+        <div>
+           <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+              <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+           </div>
+           <span className="text-xs text-gray-500 leading-none">2 min ago</span>
+        </div>
+     </div>
+
+
+   };
    const RenderChat = () => (
        <>
 
@@ -54,87 +110,8 @@ export default function P2PChat() {
                  //style={{ backgroundImage: `url(${roomSVG})` }}
                  className="flex flex-col flex-grow w-full bg-white shadow-xl rounded-lg overflow-hidden">
                 <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg">
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                      <div>
-                         <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg">
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                      <div>
-                         <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg">
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                      <div>
-                         <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                   </div>
-                   <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
-                      <div>
-                         <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">Lorem ipsum dolor sit.</p>
-                         </div>
-                         <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                      </div>
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-                   </div>
+                   {renderMessage()}
+                   {renderSelfMessage()}
                 </div>
 
                 <div
@@ -163,6 +140,9 @@ export default function P2PChat() {
                    <div className="flex-grow ml-4">
                       <div className="relative w-full">
                          <input
+                             value={text}
+                             placeholder="Message"
+                             onChange={(e) => setText(e.target.value)}
                              type="text"
                              className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                          />
@@ -170,6 +150,7 @@ export default function P2PChat() {
                    </div>
                    <div className="ml-4">
                       <button
+                          onClick={() => onSendMessage(text)}
                           className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                       >
                          <span>Send</span>

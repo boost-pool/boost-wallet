@@ -134,6 +134,7 @@ export const generateWalletRootKey = async (mnemonic: string) => {
     console.log(e);
   }
 
+
   // @ts-ignore
   return rootKey;
 }
