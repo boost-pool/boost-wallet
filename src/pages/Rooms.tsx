@@ -10,7 +10,7 @@ import {handlePath} from "../components/routing";
 import {ROUTES} from "../App";
 import {getAccount, getSettings} from "../store/selectors";
 import Store from '../store';
-import {getAccountFromDb, updateAccountByNetworkInDb} from "../db";
+import {getAccountFromDb, updateAccountByNameAndNetworkInDb, updateAccountByNetworkInDb} from "../db";
 import {setAccount} from "../store/actions";
 import {addressSlice} from "../utils/utils";
 import {get, set} from "../db/storage";
@@ -46,17 +46,20 @@ export default function Rooms(props) {
    });
 
    useEffect(() => {
-      getAccountFromDb().then(acc => {
-         setAccount({...acc[settings.network.net], id: acc.id,  name: acc.name});
-         setRooms(acc[settings.network.net].rooms);
-      });
-
+      updateState();
    }, []);
 
 
    const onCopy = (content: string) => {
       writeToClipboard(content).then(() => {
          Toast.info("Copy success")
+      });
+   }
+
+   const updateState = () => {
+      getAccountFromDb().then(acc => {
+         setAccount({...acc[settings.network.net], id: acc.id,  name: acc.name});
+         setRooms(acc[settings.network.net].rooms);
       });
    }
 
@@ -97,6 +100,7 @@ export default function Rooms(props) {
                });
                console.log("result createServerP2P");
                console.log(result);
+
             } catch (e) {
 
             }
@@ -125,6 +129,7 @@ export default function Rooms(props) {
                });
                console.log("result joinServerP2P");
                console.log(result);
+
             } catch (e) {
 
             }
@@ -132,13 +137,67 @@ export default function Rooms(props) {
       }
    };
 
-   const renderTabs1 = () => {
-      return <div className="w-full">
-         <Tab.Group defaultIndex={1}>
+   const onRemoveRoom =  async (room:any) => {
+      let acc = account;
+      let serverRooms = acc?.rooms?.server || {};
 
-         </Tab.Group>
-      </div>
+      console.log("serverRooms0");
+      console.log(serverRooms);
+      if (serverRooms[room.name] !== undefined){
+         // create a new copy
+         let aux = {...serverRooms};
+         // delete the copy and use newUser that thereafter.
+         delete aux[room.name];
+         serverRooms = aux;
+      }
+
+      let r = acc.rooms;
+      r = {...r, server: serverRooms};
+      acc = {...acc, rooms: r};
+
+      await updateAccountByNameAndNetworkInDb(settings.network.net, account.name, acc);
+      setAccount(acc);
+
+      await Messaging.sendToBackground({
+         method: METHOD.removeServerP2P,
+         origin: window.origin,
+         room: {name: room.name}
+      });
+
+      updateState();
    }
+
+   const onRemoveJoinedRoom =  async (room:any) => {
+      let acc = account;
+      let clientRooms = acc?.rooms?.client || {};
+
+      console.log("serverRooms0");
+      console.log(clientRooms);
+      if (clientRooms[room.name] !== undefined){
+         // create a new copy
+         let aux = {...clientRooms};
+         // delete the copy and use newUser that thereafter.
+         delete aux[room.name];
+         clientRooms = aux;
+      }
+
+      let r = acc.rooms;
+      r = {...r, client: clientRooms};
+      acc = {...acc, rooms: r};
+
+      await updateAccountByNameAndNetworkInDb(settings.network.net, account.name, acc);
+      setAccount(acc);
+
+      await Messaging.sendToBackground({
+         method: METHOD.removeJoinedP2P,
+         origin: window.origin,
+         room: {name: room.name}
+      });
+
+      updateState();
+   }
+
+
    const renderTabs = () => {
 
       return <div className="w-full mt-8">
@@ -261,7 +320,7 @@ export default function Rooms(props) {
          return null;
       }
    }
-   const RenderActivity = () => {
+   const renderRooms = () => {
 
       //      return rooms && Object.keys(rooms).length ? Object.keys(rooms).map((room:string) => {
       return <section className="py-5">
@@ -296,7 +355,9 @@ export default function Rooms(props) {
                            </button>
                            <button
                                className="ml-2 p-1 px-3 inline-flex text-gray-400 hover:text-gray-500 rounded-full focus:ring-0 outline-none focus:outline-none border-2">
-                                 <span className="">
+                                 <span
+                                     onClick={() => onRemoveRoom(rooms.server[room])}
+                                     className="">
                                     DELETE
                                  </span>
                            </button>
@@ -353,7 +414,9 @@ export default function Rooms(props) {
                            </button>
                            <button
                                className="ml-2 p-1 px-3 inline-flex text-gray-400 hover:text-gray-500 rounded-full focus:ring-0 outline-none focus:outline-none border-2">
-                                 <span className="">
+                                 <span
+                                     onClick={() => onRemoveJoinedRoom(rooms.client[room])}
+                                     className="">
                                     DELETE
                                  </span>
                            </button>
@@ -387,7 +450,7 @@ export default function Rooms(props) {
 
    return (
        <>
-          <header className="pt-6 pb-4 px-5 border-b border-gray-200">
+          <header className="pt-6 pb-4 px-5 border-b border-gray-200 bg-blue-100">
              <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
                    <a className="inline-flex items-start p-2 mr-3 bg-blue-200 rounded-full" href="#0">
@@ -457,7 +520,7 @@ export default function Rooms(props) {
           </header>
 
 
-          {RenderActivity()}
+          {renderRooms()}
        </>
    )
 

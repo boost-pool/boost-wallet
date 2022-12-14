@@ -15,10 +15,10 @@ const config: CapacitorConfig = {
          sound: "beep.wav"
       }
    },
-   server: {
-      url: "http://192.168.31.17:3001",
-      cleartext: true
-   }
+   //server: {
+   //   url: "http://192.168.31.17:3001",
+   //   cleartext: true
+   //}
 };
 
 export default config;

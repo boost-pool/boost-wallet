@@ -22,6 +22,8 @@ export const METHOD = {
     createServerP2P: 'createServerP2P',
     joinServerP2P: 'joinServerP2P',
     sendMessageP2P: 'sendMessageP2P',
+    removeServerP2P: 'removeServerP2P',
+    removeJoinedP2P: 'removeJoinedP2P',
 };
 
 /*

@@ -693,6 +693,97 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
     }
 });
 
+
+app.add(METHOD.removeServerP2P, async (request, sendResponse) => {
+
+    try {
+        console.log("METHOD.removeServerP2P");
+        console.log("request4");
+        console.log(request);
+
+        // @ts-ignore
+        if (!request || !request?.room?.name?.length){
+            console.log("Not name in request.room")
+            console.log(request);
+            return;
+        }
+
+        // @ts-ignore
+        const roomName = request?.room?.name || '';
+
+        // @ts-ignore
+        if (p2p_servers_dict[roomName] !== undefined){
+            // @ts-ignore
+            let meerkat: Meerkat = p2p_servers_dict[roomName];
+
+            // @ts-ignore
+            delete p2p_servers_dict[roomName]
+            meerkat.close();
+            console.log(`[info]: The server closed is: ${roomName}`);
+
+            sendResponse({
+                // @ts-ignore
+                id: "room removed",
+                target: TARGET,
+                sender: SENDER.extension,
+            });
+        }
+    } catch (e) {
+        sendResponse({
+            // @ts-ignore
+            id: "request.error",
+            error: e,
+            target: TARGET,
+            sender: SENDER.extension,
+        });
+    }
+});
+app.add(METHOD.removeJoinedP2P, async (request, sendResponse) => {
+
+    try {
+        console.log("METHOD.removeServerP2P");
+        console.log("request4");
+        console.log(request);
+
+        // @ts-ignore
+        if (!request || !request?.room?.name?.length){
+            console.log("Not name in request.room")
+            console.log(request);
+            return;
+        }
+
+        // @ts-ignore
+        const roomName = request?.room?.name || '';
+
+        // @ts-ignore
+        if (p2p_clients_dict[roomName] !== undefined){
+            // @ts-ignore
+            let meerkat: Meerkat = p2p_clients_dict[roomName];
+
+            // @ts-ignore
+            delete p2p_clients_dict[roomName]
+            meerkat.close();
+            console.log(`[info]: The server closed is: ${roomName}`);
+
+            sendResponse({
+                // @ts-ignore
+                id: "room removed",
+                target: TARGET,
+                sender: SENDER.extension,
+            });
+        }
+    } catch (e) {
+        sendResponse({
+            // @ts-ignore
+            id: "request.error",
+            error: e,
+            target: TARGET,
+            sender: SENDER.extension,
+        });
+    }
+});
+
+
 app.listen();
 
 //delete localStorage globalModel

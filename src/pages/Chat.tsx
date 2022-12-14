@@ -16,6 +16,10 @@ import {METHOD} from "../api/background/config";
 import {SendP2PMessage} from "../api/extension"
 import {Capacitor} from "@capacitor/core";
 import {addressSlice} from "../utils/utils";
+import {extendMoment} from "moment-range";
+import Moment from 'moment';
+// @ts-ignore
+const moment = extendMoment(Moment);
 
 export default function P2PChat() {
 
@@ -70,6 +74,13 @@ export default function P2PChat() {
 
                   console.log("result sendMessageP2P");
                   console.log(result);
+
+                  const newMessage = {
+                     sender: 'SELF',
+                     text: text,
+                     time: moment.utc().format("YYYY-MM-DD H:mm:ss")
+                  }
+                  setMessages((prev: any) => [...prev, newMessage])
                } catch (e) {
 
                }
@@ -135,7 +146,12 @@ export default function P2PChat() {
                 <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
                    {
                       messages && messages.length ? messages.map((m: { time: string; sender: string; text: any; }) => {
-                         return renderMessage(m)
+
+                         if (m.sender === 'SELF'){
+                            return renderSelfMessage(m);
+                         } else {
+                            return renderMessage(m);
+                         }
                       }) : null
                    }
                 </div>
