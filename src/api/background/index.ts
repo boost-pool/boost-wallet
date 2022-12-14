@@ -513,7 +513,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
 
         meerkat.register('message', (address: any, args: any, callback: (arg0: string) => void) => {
             console.log(
-                `[info]: message rpc call invoked by address ${address} into window.cardano`
+                `[info]:joinServerP2P message rpc call invoked by address ${address} into window.cardano`
             );
 
             getAccountFromDb().then(account => {
@@ -527,7 +527,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                 if (!serverName) return;
 
                 serverRooms[serverName] = {
-                    ...serverRooms,
+                    ...serverRooms[serverName] ,
                     messages: serverRooms[serverName]?.messages?.length
                         ? [...serverRooms[serverName]?.messages,args]
                         : [args]
@@ -568,7 +568,7 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
 
 //app.add(METHOD.loadP2P, async (request, sendResponse) => {
 app.add(METHOD.createServerP2P, async (request, sendResponse) => {
-    console.log("METHOD.loadP2P");
+    console.log("METHOD.createServerP2P");
     console.log("request1");
     console.log(request);
 
@@ -624,7 +624,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
 
         meerkat.register('message', (address: any, args: any, callback: (arg0: string) => void) => {
             console.log(
-                `[info]: message rpc call invoked by address ${address} into window.cardano`
+                `[info]:createServerP2P message rpc call invoked by address ${address} into window.cardano`
             );
 
             getAccountFromDb(accountName).then(account => {
@@ -643,7 +643,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                     time: moment.utc().format("YYYY-MM-DD h:mm:ss")
                 }
                 serverRooms[serverName] = {
-                    ...serverRooms,
+                    ...serverRooms[serverName] ,
                     messages: serverRooms[serverName]?.messages?.length
                         ? [...serverRooms[serverName]?.messages, newMessage]
                         : [newMessage]
