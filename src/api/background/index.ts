@@ -427,6 +427,8 @@ app.add(METHOD.sendMessageP2P, async (request, sendResponse) => {
 
         let meerkat = new Meerkat({identifier: clientAddress || ''});
 
+        meerkat.announce = ["https://pro.passwordchaos.gimbalabs.io/"]
+
         console.log("new meerkat")
 
         meerkat.on('server', () => {
@@ -436,6 +438,8 @@ app.add(METHOD.sendMessageP2P, async (request, sendResponse) => {
                 console.log(`To server :${clientAddress}`)
                 console.log(`By user :${meerkat.address()}`)
                 //response(`Message sent: ${message}`);
+                meerkat.close();
+                console.log(`Connection is closed`)
             });
         });
 
@@ -492,6 +496,8 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
             clientAddress = meerkat.address();
         }
 
+        meerkat.announce = ["https://pro.passwordchaos.gimbalabs.io/"]
+
         meerkat.on('server', () => {
             console.log('[info]: connected to server');
 
@@ -537,7 +543,6 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
                 updateAccountByNameAndNetworkInDb(network, accountName, acc);
                 setAccount(acc);
             });
-
             callback('callback from message in joinServerP2P');
         });
         // Update background state
@@ -564,7 +569,6 @@ app.add(METHOD.joinServerP2P, async (request, sendResponse) => {
         });
     }
 });
-
 
 //app.add(METHOD.loadP2P, async (request, sendResponse) => {
 app.add(METHOD.createServerP2P, async (request, sendResponse) => {
@@ -596,7 +600,10 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
             meerkat = p2p_servers_dict[roomName];
         }
 
+        meerkat.announce = ["https://pro.passwordchaos.gimbalabs.io/"];
+
         let connected = false;
+        let updatedAccount = {};
         meerkat.on('connections', (clients:number) => {
             if (clients === 0 && connected === false) {
                 connected = true;
@@ -615,6 +622,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                     acc.rooms.server = serverRooms;
 
                     updateAccountByNameAndNetworkInDb(network, accountName, acc);
+                    updatedAccount = acc;
                     setAccount(acc);
                 });
             }
@@ -651,6 +659,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                 acc.rooms.server = serverRooms;
 
                 updateAccountByNameAndNetworkInDb(network, accountName, acc);
+                updatedAccount = acc;
                 setAccount(acc);
             });
 
@@ -669,6 +678,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
             id: "room created",
             target: TARGET,
             sender: SENDER.extension,
+            updatedAccount
         });
     } catch (e) {
         console.log("Error in loadP2P bg");

@@ -61,12 +61,15 @@ export default function P2PChat() {
             } else {
                console.log("you are in web device");
                try {
-                  await Messaging.sendToBackground({
+                  const result = await Messaging.sendToBackground({
                      method: METHOD.sendMessageP2P,
                      origin: window.origin,
                      message: text,
                      room: {name: router?.payload?.room?.name, clientAddress: router?.payload?.room?.clientAddress}
                   });
+
+                  console.log("result sendMessageP2P");
+                  console.log(result);
                } catch (e) {
 
                }

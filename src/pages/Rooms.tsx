@@ -10,7 +10,7 @@ import {handlePath} from "../components/routing";
 import {ROUTES} from "../App";
 import {getAccount, getSettings} from "../store/selectors";
 import Store from '../store';
-import {updateAccountByNetworkInDb} from "../db";
+import {getAccountFromDb, updateAccountByNetworkInDb} from "../db";
 import {setAccount} from "../store/actions";
 import {addressSlice} from "../utils/utils";
 import {get, set} from "../db/storage";
@@ -40,12 +40,16 @@ export default function Rooms(props) {
    const [roomName, setRoomName] = useState('');
    const [joinRoomName, setJoinRoomName] = useState('');
    const [selectedTab, setSelectedTab] = useState(P2P_ROOMS_TABS.CREATE);
-   const [rooms, _] = useState(account?.rooms || {
+   const [rooms, setRooms] = useState(account?.rooms || {
       server: {},
       client: {}
    });
 
    useEffect(() => {
+      getAccountFromDb().then(acc => {
+         setAccount({...acc[settings.network.net], id: acc.id,  name: acc.name});
+         setRooms(acc[settings.network.net].rooms);
+      });
 
    }, []);
 
@@ -84,13 +88,15 @@ export default function Rooms(props) {
          } else {
             console.log("you are in web");
             try {
-               await Messaging.sendToBackground({
+               const result = await Messaging.sendToBackground({
                   method: METHOD.createServerP2P,
                   origin: window.origin,
                   accountName: account.name,
                   network: settings.network.net,
                   room: {name: rName}
                });
+               console.log("result createServerP2P");
+               console.log(result);
             } catch (e) {
 
             }
@@ -110,13 +116,15 @@ export default function Rooms(props) {
          } else {
             console.log("you are in web device");
             try {
-               await Messaging.sendToBackground({
+               const result = await Messaging.sendToBackground({
                   method: METHOD.joinServerP2P,
                   origin: window.origin,
                   accountName: account.name,
                   network: settings.network.net,
                   room: {name: rName, clientAddress: rAddress}
                });
+               console.log("result joinServerP2P");
+               console.log(result);
             } catch (e) {
 
             }
