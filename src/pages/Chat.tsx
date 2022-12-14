@@ -15,14 +15,16 @@ import {METHOD} from "../api/background/config";
 //import roomSVG from "../resources/img/room.svg";
 import {SendP2PMessage} from "../api/extension"
 import {Capacitor} from "@capacitor/core";
+import {addressSlice} from "../utils/utils";
 
 export default function P2PChat() {
 
    const router = Store.useState(getRouter);
    const [text, setText] = useState('');
-   const [messagges, setMessagges] = useState([{
+   const [messages, setMessages] = useState(router?.payload?.room?.messages || []);
 
-   }]);
+   console.log("messages");
+   console.log(messages);
 
    console.log("router");
    console.log(router);
@@ -76,26 +78,33 @@ export default function P2PChat() {
       }
    };
 
-   const renderSelfMessage = () => {
+   const renderSelfMessage = (msg: { time: string; sender: string, text: any }) => {
      return <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg ml-auto justify-end">
         <div>
            <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-              <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p>
            </div>
-           <span className="text-xs text-gray-500 leading-none">2 min ago</span>
+           <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+              <p className="text-sm">{msg.text.message}</p>
+           </div>
+           <span className="text-xs text-gray-500 leading-none">{msg.time}</span>
         </div>
-        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">{msg?.sender?.length && msg.sender[0] || 'X'}</div>
      </div>
 
    };
-   const renderMessage = () => {
+   const renderMessage = (msg: { time: string; sender: string, text: any }) => {
+      console.log("renderMessage");
+      console.log("msg");
+      console.log(msg);
      return <div className="flex w-full mt-2 space-x-3 max-w-xs md:max-w-md lg:max-w-lg">
-        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+        </div>
         <div>
+           <span className="text-xs text-gray-500 leading-none">{addressSlice(msg.sender, 7)}</span>
            <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-              <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <p className="text-sm">{msg.text.message}</p>
            </div>
-           <span className="text-xs text-gray-500 leading-none">2 min ago</span>
+           <span className="text-xs text-gray-500 leading-none">{msg.time}</span>
         </div>
      </div>
 
@@ -121,8 +130,11 @@ export default function P2PChat() {
                  //style={{ backgroundImage: `url(${roomSVG})` }}
                  className="flex flex-col flex-grow w-full bg-white shadow-xl rounded-lg overflow-hidden">
                 <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
-                   {renderMessage()}
-                   {renderSelfMessage()}
+                   {
+                      messages && messages.length ? messages.map((m: { time: string; sender: string; text: any; }) => {
+                         return renderMessage(m)
+                      }) : null
+                   }
                 </div>
 
                 <div

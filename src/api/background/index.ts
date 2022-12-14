@@ -640,7 +640,7 @@ app.add(METHOD.createServerP2P, async (request, sendResponse) => {
                 const newMessage = {
                     sender: address,
                     text: args,
-                    time: moment.utc().format("YYYY-MM-DD h:mm:ss")
+                    time: moment.utc().format("YYYY-MM-DD H:mm:ss")
                 }
                 serverRooms[serverName] = {
                     ...serverRooms[serverName] ,
