@@ -1,37 +1,24 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'boostWallet',
-  webDir: "out",
-  bundledWebRuntime: true,
-  plugins: {
-    SplashScreen: {
-      launchShowDuration: 0,
-    },
-    CapacitorSQLite: {
-      iosDatabaseLocation: 'Library/CapacitorDatabase',
-      iosIsEncryption: true,
-      iosKeychainPrefix: 'react-sqlite-app-starter',
-      iosBiometric: {
-        biometricAuth: false,
-        biometricTitle : "Biometric login for capacitor sqlite"
+   appId: "com.boostwallet",
+   appName: "Boost Wallet",
+   webDir: "build",
+   bundledWebRuntime: true,
+   plugins: {
+      SplashScreen: {
+         launchShowDuration: 0,
       },
-      androidIsEncryption: true,
-      androidBiometric: {
-        biometricAuth : false,
-        biometricTitle : "Biometric login for capacitor sqlite",
-        biometricSubTitle : "Log in using your biometric"
+      LocalNotifications: {
+         smallIcon: "ic_stat_icon_config_sample",
+         iconColor: "#488AFF",
+         sound: "beep.wav"
       }
-    }
-  },
-
-  //server: {
-    //url: "http://192.168.0.13:3000",
-    //url: "http://192.168.31.149:3000",
-    //cleartext: true,
-  //}
-
+   },
+   //server: {
+   //   url: "http://192.168.0.15:3001",
+   //   cleartext: true
+   //
 };
 
 export default config;
